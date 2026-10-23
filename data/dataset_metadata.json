@@ -1,0 +1,39 @@
+{
+    "dataset_name": "Statlog (German Credit Data)",
+    "openml_id": 31,
+    "source_url": "https://www.openml.org/d/31",
+    "uci_url": "https://archive.ics.uci.edu/dataset/144/statlog+german+credit+data",
+    "author": "Prof. Dr. Hans Hofmann, University of Hamburg (1994)",
+    "license": "Public – phục vụ nghiên cứu và giảng dạy",
+    "n_total_samples": 1000,
+    "n_features_raw": 20,
+    "n_features_encoded": 20,
+    "label_encoding": "0 = Good Credit (Tín dụng tốt), 1 = Bad Credit (Rủi ro nợ xấu)",
+    "class_distribution": {
+        "good_credit": 700,
+        "bad_credit": 300
+    },
+    "cost_matrix": {
+        "cost_fn": 5,
+        "cost_fp": 1,
+        "ratio_fn_to_fp": "5:1",
+        "note": "Nguồn: Hofmann (1994) – chuẩn benchmark quốc tế"
+    },
+    "train_set": {
+        "n_samples": 800,
+        "n_good": 560,
+        "n_bad": 240,
+        "bad_ratio_pct": 30.0
+    },
+    "test_set": {
+        "n_samples": 200,
+        "n_good": 140,
+        "n_bad": 60,
+        "bad_ratio_pct": 30.0
+    },
+    "split_config": {
+        "ratio": "80% Train (5-Fold Stratified CV) / 20% Locked Test",
+        "random_seed": 42,
+        "stratified": true
+    }
+}

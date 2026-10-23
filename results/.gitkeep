@@ -1,0 +1,4 @@
+# Thư mục lưu trữ file log thực nghiệm dạng CSV/JSON
+# results/baseline_metrics.json
+# results/optuna_trials_seed42.csv
+# ...
