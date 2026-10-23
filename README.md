@@ -96,15 +96,17 @@ Ngân hàng bắt buộc duyệt tối thiểu $65\%$ hồ sơ để duy trì ch
 
 ---
 
-## 5. Kế hoạch 05 Tuần
+## 5. Key Results & 05-Week Execution Plan
 
-| Tuần | Nội dung | Trạng thái |
-| :---: | :--- | :---: |
-| **1** | Mô hình hóa bài toán $x, f(x), g(x)$; thiết lập repo, pipeline dữ liệu | ✅ Hoàn thành |
-| **2** | Cài đặt hàm chi phí, chạy Baseline, tạo `notebooks/01_baseline.ipynb` | 🔄 Đang thực hiện |
-| **3** | Tối ưu Optuna, vẽ đồ thị Cost vs. Threshold, lưu log `results/` | 📅 Dự kiến |
-| **4** | So sánh 5 seeds, tính % tiết kiệm chi phí, kiểm thử trên tập Test | 📅 Dự kiến |
-| **5** | Hoàn thiện báo cáo 8–12 trang, Release `v1.0`, slide demo | 📅 Dự kiến |
+Dự án được thiết kế dưới dạng **GitHub Portfolio trọn gói (Self-contained Project)**: Toàn bộ quá trình mô hình hóa, thực nghiệm, mã nguồn, biểu đồ trực quan và phân tích định lượng được tích hợp trực tiếp ngay trên Repository này.
+
+| Tuần | Nội dung công việc | Sản phẩm Checkpoint | Trạng thái |
+| :---: | :--- | :--- | :---: |
+| **1** | Xác lập bài toán chi phí tín dụng, mô hình hóa $x, f(x), g(x)$, thiết lập repo và pipeline khóa test set | Repo public, README khung, `src/data_utils.py`, `week1_formulation.md` | ✅ Hoàn thành |
+| **2** | Cài đặt hàm chi phí tài chính, chạy đối chuẩn mô hình mặc định (Baseline), lưu bảng chỉ số mốc | `notebooks/01_baseline.ipynb`, bảng Baseline metrics, cập nhật commit tuần 2 | 🔄 Đang thực hiện |
+| **3** | Cài đặt thuật toán Optuna (TPE) tối ưu đồng thời $\tau^*$ và siêu tham số, lưu log chạy và vẽ đồ thị | `notebooks/02_optimization.ipynb`, file log `CSV/JSON`, đồ thị Cost vs. Threshold | 📅 Dự kiến |
+| **4** | Chạy thực nghiệm trên 5 hạt giống (seeds), phân tích độ ổn định, đo % chi phí tiết kiệm và đánh giá tập Test | `results/`, đồ thị Boxplot/Stability, bảng đánh giá tập Test cuối cùng | 📅 Dự kiến |
+| **5** | Chốt nghiệm tối ưu, phân tích giá trị kinh doanh thực tế, hoàn thiện README Portfolio, Release `v1.0` & Slide demo | Release tag `v1.0`, toàn bộ biểu đồ tại `figures/`, slide tóm tắt 5–7 phút bảo vệ | 📅 Dự kiến |
 
 ---
 
