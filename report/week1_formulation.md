@@ -20,7 +20,7 @@
 | **Phương pháp tối ưu chính** | Tối ưu hóa Bayes / TPE (Tree-structured Parzen Estimator) qua thư viện `Optuna`, kết hợp quét lưới định hướng chi phí (Cost-directed Search). |
 | **Metric** | Chi phí tổn thất trung bình (Cost/Sample), % Tiết kiệm chi phí so với Baseline, Recall (Bad Credit), Tỷ lệ phê duyệt hồ sơ. |
 | **Budget / điều kiện dừng** | $B = 50$ trials / seed; lặp lại trên 5 seeds cố định: `{42, 100, 2024, 2025, 2026}`. |
-| **Sản phẩm dự kiến Tuần 5** | Mã nguồn Python tái lập, log `CSV/JSON`, đồ thị Cost vs. Threshold Curve, bảng đối sánh tiết kiệm chi phí thực tế, GitHub Portfolio hoàn chỉnh, Release `v1.0` và slide demo 5–7 phút. |
+| **Sản phẩm dự kiến Tuần 5** | Mã nguồn Python tái lập từ đầu đến cuối, file log `CSV/JSON`, đồ thị trực quan Cost vs. Threshold Curve, bảng đối sánh tiết kiệm chi phí thực tế, GitHub Portfolio hoàn chỉnh và Release `v1.0`. |
 | **GitHub repository** | `https://github.com/dohoangphuc2006/credit-risk-cost-sensitive-optimization` (Public). |
 
 ---

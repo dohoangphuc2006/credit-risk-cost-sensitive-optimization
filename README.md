@@ -106,7 +106,7 @@ Dự án được thiết kế dưới dạng **GitHub Portfolio trọn gói (Se
 | **2** | Cài đặt hàm chi phí tài chính, chạy đối chuẩn mô hình mặc định (Baseline), lưu bảng chỉ số mốc | `notebooks/01_baseline.ipynb`, bảng Baseline metrics, cập nhật commit tuần 2 | 🔄 Đang thực hiện |
 | **3** | Cài đặt thuật toán Optuna (TPE) tối ưu đồng thời $\tau^*$ và siêu tham số, lưu log chạy và vẽ đồ thị | `notebooks/02_optimization.ipynb`, file log `CSV/JSON`, đồ thị Cost vs. Threshold | 📅 Dự kiến |
 | **4** | Chạy thực nghiệm trên 5 hạt giống (seeds), phân tích độ ổn định, đo % chi phí tiết kiệm và đánh giá tập Test | `results/`, đồ thị Boxplot/Stability, bảng đánh giá tập Test cuối cùng | 📅 Dự kiến |
-| **5** | Chốt nghiệm tối ưu, phân tích giá trị kinh doanh thực tế, hoàn thiện README Portfolio, Release `v1.0` & Slide demo | Release tag `v1.0`, toàn bộ biểu đồ tại `figures/`, slide tóm tắt 5–7 phút bảo vệ | 📅 Dự kiến |
+| **5** | Chốt cấu hình tối ưu, đo lường tổng chi phí tiết kiệm cho ngân hàng, hoàn thiện toàn diện README Portfolio và đóng gói Release `v1.0` | Release tag `v1.0`, toàn bộ biểu đồ trực quan tại `figures/`, mã nguồn chuẩn hóa chạy tái lập 100% | 📅 Dự kiến |
 
 ---
 
