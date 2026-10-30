@@ -1,0 +1,27 @@
+{
+  "dataset": {"openml_id": 31, "name": "credit-g", "expected_samples": 1000, "expected_features": 20},
+  "split": {"test_size": 0.2, "seed": 42},
+  "cv": {"n_splits": 5, "shuffle": true, "seed": 42},
+  "model_seed": 42,
+  "optimization": {
+    "trials_per_seed": 50,
+    "sampler_seeds": [42, 100, 2024, 2025, 2026],
+    "search_space": {
+      "threshold": {"type": "float", "low": 0.1, "high": 0.9},
+      "n_estimators": {"type": "int", "low": 20, "high": 200},
+      "max_depth": {"type": "int", "low": 2, "high": 15},
+      "min_samples_split": {"type": "int", "low": 2, "high": 20},
+      "bad_class_weight": {"type": "float", "low": 1.0, "high": 10.0}
+    }
+  },
+  "cost": {"false_negative": 5.0, "false_positive": 1.0},
+  "policy": {
+    "max_rejection_rate": 0.35,
+    "constraint_scope": "pooled_train_oof",
+    "penalty_multiplier": 10.0
+  },
+  "sensitivity": {
+    "planned_max_rejection_rates": [0.25, 0.35, 0.45],
+    "planned_false_negative_costs": [2.0, 5.0, 10.0]
+  }
+}

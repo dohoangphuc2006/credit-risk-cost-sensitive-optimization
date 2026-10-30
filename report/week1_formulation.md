@@ -1,77 +1,180 @@
-# BẢN ĐĂNG KÝ ĐỀ TÀI & MÔ HÌNH HÓA BÀI TOÁN (TUẦN 1)
+# Tuần 1: Đăng ký đề tài và mô hình hóa
 
-**Môn học:** Nhập môn Tối ưu hóa  
-**Chuyên ngành:** Trí tuệ nhân tạo – Khoa Công nghệ thông tin – Trường Đại học Văn Lang  
-**Họ và tên:** Đỗ Hoàng Phúc  
+**Sinh viên:** Đỗ Hoàng Phúc - Trí tuệ nhân tạo, Trường Đại học Văn Lang.
 
----
+Đây là ghi chú thiết kế trong GitHub repo. Sinh viên đã chạy chuẩn bị dữ liệu
+v2, lưu phiên bản môi trường; dữ liệu và checksum đã được kiểm tra.
+Checkpoint tuần 1 đang chờ commit/push.
 
-## PHẦN 1: MẪU ĐĂNG KÝ ĐỀ TÀI (01 TRANG)
+## 1. Đăng ký đề tài
 
-| Hạng mục | Nội dung chi tiết |
-| :--- | :--- |
-| **Tên đề tài** | Tối ưu hóa Mô hình Học máy Hướng Chi phí (Cost-Sensitive Machine Learning Optimization) trong Đánh giá Rủi ro Tín dụng Ngân hàng: Cực tiểu hóa Tổn thất Tài chính qua Tối ưu Ngưỡng Phân loại và Siêu tham số Mô hình. |
-| **Bối cảnh / vấn đề** | Trong quản trị rủi ro tín dụng, duyệt nhầm kẻ quỵt nợ (FN) gây tổn thất vốn gốc nặng gấp 5 lần so với từ chối nhầm khách tốt (FP). Mô hình AI truyền thống tối ưu theo Accuracy/F1 với ngưỡng cố định $\tau = 0.5$ bỏ qua hoàn toàn bất đối xứng chi phí này. Cần mô hình hóa bài toán tối ưu hóa để tìm đồng thời ngưỡng $\tau^*$ và siêu tham số mô hình tối thiểu hóa tổng tổn thất tài chính thực tế. |
-| **Dataset / nguồn** | **Statlog (German Credit Data)** – 1.000 hồ sơ khách hàng, 20 biến tài chính/kinh tế (Tuổi, Số tiền vay, Lịch sử nợ, Tiết kiệm, Việc làm...). Nguồn: UCI ML Repository / OpenML (ID: 31). Loại dữ liệu: Public benchmark công bố chính thức (+0.25 điểm cộng). |
-| **Decision variables $x$** | Vector 5 biến quyết định hỗn hợp: $x = (\tau, n_{\text{est}}, d_{\max}, s_{\text{split}}, w_{\text{class}})$. |
-| **Objective $f(x)$** | Cực tiểu hóa chi phí tổn thất tài chính trung bình trên mỗi hồ sơ thông qua 5-Fold Stratified CV: $\min_{x \in \Omega} f(x) = \frac{1}{K}\sum_{k=1}^{K}\frac{C_{\text{FN}} \cdot \text{FN}_k(x) + C_{\text{FP}} \cdot \text{FP}_k(x)}{N_k}$, với $C_{\text{FN}}=5$, $C_{\text{FP}}=1$. |
-| **Constraints / trade-off** | Ràng buộc nghiệp vụ: $g_1(x) = \text{RejectionRate}(x) - 0.35 \le 0$ (Ngân hàng phải duyệt ít nhất 65% hồ sơ để đảm bảo chỉ tiêu kinh doanh). Đánh đổi trực tiếp giữa giảm nợ xấu và giữ chân khách hàng tốt. |
-| **Baseline** | `RandomForestClassifier` mặc định `scikit-learn` với ngưỡng xác suất truyền thống $\tau = 0.5$ và trọng số lớp đồng đều. |
-| **Phương pháp tối ưu chính** | Tối ưu hóa Bayes / TPE (Tree-structured Parzen Estimator) qua thư viện `Optuna`, kết hợp quét lưới định hướng chi phí (Cost-directed Search). |
-| **Metric** | Chi phí tổn thất trung bình (Cost/Sample), % Tiết kiệm chi phí so với Baseline, Recall (Bad Credit), Tỷ lệ phê duyệt hồ sơ. |
-| **Budget / điều kiện dừng** | $B = 50$ trials / seed; lặp lại trên 5 seeds cố định: `{42, 100, 2024, 2025, 2026}`. |
-| **Sản phẩm dự kiến Tuần 5** | Mã nguồn Python tái lập từ đầu đến cuối, file log `CSV/JSON`, đồ thị trực quan Cost vs. Threshold Curve, bảng đối sánh tiết kiệm chi phí thực tế, GitHub Portfolio hoàn chỉnh và Release `v1.0`. |
-| **GitHub repository** | `https://github.com/dohoangphuc2006/credit-risk-cost-sensitive-optimization` (Public). |
+| Hạng mục | Nội dung |
+| --- | --- |
+| Tên | Tối ưu chi phí phân loại tín dụng dưới ràng buộc tỷ lệ phê duyệt |
+| Câu hỏi | Tối ưu cả ngưỡng và siêu tham số có giảm chi phí so với RF mặc định và RF chỉ tối ưu ngưỡng, khi yêu cầu phê duyệt ít nhất 65% không? |
+| Dataset | Statlog German Credit, OpenML ID 31, 1.000 mẫu, 20 đặc trưng, 700 good / 300 bad |
+| Quyền sử dụng | CC BY 4.0 theo trang UCI; ghi nguồn và DOI khi chia sẻ |
+| Biến quyết định | Ngưỡng, số cây, độ sâu, mẫu tối thiểu tách nhánh, trọng số lớp bad |
+| Objective | Chi phí phân loại trung bình trên dự đoán OOF của tập train |
+| Constraint | Tỷ lệ từ chối OOF không vượt 35% theo giả định nghiên cứu |
+| Baselines | RF mặc định tại 0.5; RF mặc định chỉ tối ưu ngưỡng trên OOF |
+| Phương pháp | Optuna TPE; Random Search đối chứng cùng ngân sách |
+| Metric | Cost/sample chính; FN, FP, recall bad, approval rate và feasibility phụ |
+| Budget | 50 trials / sampler seed / phương pháp; 5 sampler seeds; 5-fold CV |
+| Sản phẩm | Repo có source/notebook, config, logs, bảng/hình và hướng dẫn tái lập |
+| Repository | [credit-risk-cost-sensitive-optimization](https://github.com/dohoangphuc2006/credit-risk-cost-sensitive-optimization) |
 
----
+## 2. Giả định và ký hiệu
 
-## PHẦN 2: CHI TIẾT MÔ HÌNH HÓA TOÁN HỌC (PROBLEM FORMULATION)
+- Nhãn $y=0$: good; $y=1$: bad. Dự đoán 1 tương ứng từ chối trong mô phỏng.
+- Chi phí $C_{FN}=5$, $C_{FP}=1$ là đơn vị tương đối từ benchmark UCI.
+  Không quy đổi thành tiền thật hay giả định mọi trường hợp bad mất toàn bộ vốn.
+- Phê duyệt tối thiểu 65% là giả định nghiên cứu, không phải quy định ngân hàng.
+- $\mathbf{u}_i$ là đặc trưng hồ sơ; $z$ là vector cấu hình thuật toán thay đổi.
+- Dùng phép chia ngẫu nhiên phân tầng để nghiên cứu benchmark; chưa đánh giá
+  theo thời gian hoặc xác nhận khả năng triển khai thực tế.
 
-### 1. Không gian biến quyết định ($\Omega$)
+## 3. Biến quyết định và miền tìm kiếm
 
-Vector biến quyết định hỗn hợp (liên tục và nguyên) gồm 5 thành phần điều khiển đồng thời ngưỡng phân loại và cấu trúc mô hình:
+$$z=(\tau,n,d,s,w)\in\Omega$$
 
-$$x = (\tau,\ n_{\text{est}},\ d_{\max},\ s_{\text{split}},\ w_{\text{class}}) \in \Omega$$
+$$\Omega=[0.10,0.90]\times\{20,\ldots,200\}\times\{2,\ldots,15\}\times\{2,\ldots,20\}\times[1,10].$$
 
-$$\Omega = [0.10,\ 0.90] \times [20,\ 200]_\mathbb{Z} \times [2,\ 15]_\mathbb{Z} \times [2,\ 20]_\mathbb{Z} \times [1.0,\ 10.0]$$
+| Biến | Ánh xạ cài đặt |
+| --- | --- |
+| $\tau$ | `threshold`: từ chối nếu xác suất bad lớn hơn hoặc bằng ngưỡng |
+| $n$ | `n_estimators` |
+| $d$ | `max_depth` |
+| $s$ | `min_samples_split` |
+| $w$ | `bad_class_weight`, chuyển thành `class_weight={0: 1.0, 1: w}` |
 
-- $\tau \in [0.10, 0.90]$: Ngưỡng xác suất phân loại – nếu $P(\text{Bad} \mid x) \ge \tau$ thì từ chối hồ sơ.
-- $n_{\text{est}} \in [20, 200] \cap \mathbb{Z}$: Số lượng cây quyết định trong rừng (`n_estimators`).
-- $d_{\max} \in [2, 15] \cap \mathbb{Z}$: Độ sâu tối đa của mỗi cây (`max_depth`).
-- $s_{\text{split}} \in [2, 20] \cap \mathbb{Z}$: Số mẫu tối thiểu để tách nhánh (`min_samples_split`).
-- $w_{\text{class}} \in [1.0, 10.0]$: Trọng số phạt lớp nợ xấu trong quá trình huấn luyện (`class_weight`).
+Giữ các tham số RF khác ở mặc định của phiên bản ghi trong môi trường,
+và đặt `random_state=42`. Config chuẩn: `configs/experiment.json`.
 
-### 2. Ma trận chi phí tài chính (Cost Matrix – Chuẩn Benchmark Quốc tế)
+## 4. Hàm mục tiêu trên dự đoán OOF
 
-Theo quy chuẩn benchmark của German Credit Data (Hofmann, 1994), ma trận chi phí được định nghĩa:
+Tập train có $N=800$ mẫu, chia cố định thành $K=5$ folds. Với mỗi cấu hình,
+fit pipeline mới trên train của fold, rồi dự đoán xác suất bad trên validation.
+Mỗi hồ sơ train có đúng một dự đoán OOF:
 
-| | Thực tế: Tốt ($y=0$) | Thực tế: Nợ xấu ($y=1$) |
-| :--- | :---: | :---: |
-| **Dự đoán: Duyệt** ($\hat{y}=0$) | $C_{\text{TN}} = 0$ (đúng) | $C_{\text{FN}} = 5$ (lọt nợ xấu – nặng) |
-| **Dự đoán: Từ chối** ($\hat{y}=1$) | $C_{\text{FP}} = 1$ (từ chối nhầm người tốt) | $C_{\text{TP}} = 0$ (đúng) |
+$$p_i(z)=P_{\mathcal M_{z,-k(i)}}(y=1\mid\mathbf u_i),\qquad
+\hat y_i(z)=\mathbb 1[p_i(z)\ge\tau].$$
 
-### 3. Hàm mục tiêu tài chính ($f: \Omega \to \mathbb{R}_+$)
+$$f(z)=\frac{1}{N}\sum_{i=1}^{N}\left(5\,\mathbb 1[y_i=1,\hat y_i=0]+\mathbb 1[y_i=0,\hat y_i=1]\right).$$
 
-Cho tập dữ liệu huấn luyện $\mathcal{D}_{\text{train}}$ được chia thành $K = 5$ folds phân tầng. Với mỗi cấu hình khả thi $x \in \Omega$:
+Đây là $\left(5FN_{OOF}+FP_{OOF}\right)/N$, cần **cực tiểu hóa**.
+Với năm folds bằng nhau, công thức bằng trung bình chi phí/sample từng fold.
+Khi kích thước fold khác nhau, dùng công thức gộp OOF để mỗi hồ sơ có trọng số bằng nhau.
 
-**Bước 1:** Huấn luyện mô hình $\mathcal{M}(x)$ trên tập $\mathcal{D}_{\text{train}}^{(-k)}$ và lấy xác suất dự đoán trên tập kiểm định $\mathcal{D}_{\text{val}}^{(k)}$.
+| Quyết định / Nhãn thật | Good (0) | Bad (1) |
+| --- | ---: | ---: |
+| Chấp thuận (0) | TN, chi phí 0 | FN, chi phí 5 |
+| Từ chối (1) | FP, chi phí 1 | TP, chi phí 0 |
 
-**Bước 2:** Áp dụng ngưỡng $\tau$ để phân loại:
-$$\hat{y}_i = \begin{cases} 1\ (\text{Từ chối}) & \text{nếu } P(\text{Bad} \mid \mathbf{x}_i) \ge \tau \\ 0\ (\text{Duyệt}) & \text{nếu } P(\text{Bad} \mid \mathbf{x}_i) < \tau \end{cases}$$
+## 5. Ràng buộc và cơ chế phạt dự kiến
 
-**Bước 3:** Tính chi phí tổn thất trung bình trên từng fold:
-$$f(x) = \frac{1}{K} \sum_{k=1}^{K} \left[ \frac{C_{\text{FN}} \cdot \text{FN}_k(x) + C_{\text{FP}} \cdot \text{FP}_k(x)}{N_k} \right]$$
+$$r(z)=\frac{TP_{OOF}(z)+FP_{OOF}(z)}{N},\qquad g(z)=r(z)-0.35\le0.$$
 
-### 4. Ràng buộc và Phạt vi phạm ($g_1(x) \le 0$)
+Ràng buộc đo **trên toàn bộ OOF gộp**, không yêu cầu riêng từng fold đều dưới
+35%. Vẫn lưu tỷ lệ từng fold để phân tích biến động.
 
-$$g_1(x) = \frac{\text{FP}(x) + \text{TP}(x)}{N} - 0.35 \le 0 \iff \text{RejectionRate}(x) \le 35\%$$
+Ở tuần 3, objective tìm kiếm thống nhất cho Random Search và TPE được thiết kế:
 
-Khi ràng buộc bị vi phạm ($g_1(x) > 0$), nghiệm $x$ bị coi là **không khả thi (infeasible)** và bị loại khỏi quá trình tìm kiếm nghiệm tối ưu của Optuna thông qua cơ chế phạt (Penalty Constraint Handling).
+$$J(z)=\begin{cases}f(z),&g(z)\le0,\\C_{max}+f(z)+\lambda g(z),&g(z)>0,\end{cases}\quad C_{max}=\max(C_{FN},C_{FP})=5,\ \lambda=10.$$
 
-### 5. Phần tử lưu ý về Đánh đổi (Trade-off Insight)
+Mỗi hồ sơ chịu tối đa $C_{max}$ đơn vị nên $0\le f(z)\le C_{max}$.
+Mọi trial vi phạm có $J(z)>C_{max}$, kém hơn mọi trial khả thi.
+Đây là penalty do code dự án cài, không phải Optuna tự động loại trial.
+Trial vi phạm vẫn ghi log $f,r,g,J$ và `feasible=False`.
 
-Khi tăng $\tau$ (ngưỡng từ chối cao hơn):
-- **Lợi ích:** Lọc thêm được nhiều nợ xấu hơn $\Rightarrow$ Giảm $\text{FN}$ $\Rightarrow$ Giảm thiệt hại vốn gốc.
-- **Hậu quả:** Từ chối thêm nhiều khách hàng tốt $\Rightarrow$ Tăng $\text{FP}$ $\Rightarrow$ Mất tiền lãi vay và vi phạm ràng buộc nghiệp vụ.
+Chỉ chọn các trial khả thi. Nếu không có, báo `no feasible solution found
+within budget`; không tự nới ràng buộc và không chọn bằng test.
 
-Đây chính là bài toán đánh đổi (Trade-off) cốt lõi mà kỹ thuật tối ưu hóa phải giải quyết.
+## 6. Trade-off và quy tắc chọn nghiệm
+
+Với **cùng mô hình và cùng dự đoán xác suất**:
+
+| Thay đổi | Tỷ lệ từ chối | FN | FP |
+| --- | --- | --- | --- |
+| Giảm $\tau$ | Tăng hoặc giữ nguyên | Giảm hoặc giữ nguyên | Tăng hoặc giữ nguyên |
+| Tăng $\tau$ | Giảm hoặc giữ nguyên | Tăng hoặc giữ nguyên | Giảm hoặc giữ nguyên |
+
+Tổng chi phí không nhất thiết đơn điệu vì hai loại lỗi thay đổi ngược chiều.
+Khi đổi cả siêu tham số, không dùng bảng này để suy ra quan hệ giữa hai mô hình khác nhau.
+
+Chọn trial khả thi có $f$ OOF thấp nhất trong phương pháp đã chọn bằng CV.
+Nếu bằng nhau, ưu tiên ít cây hơn, rồi độ sâu nhỏ hơn, rồi sampler seed theo
+thứ tự config và trial number nhỏ hơn. Giữ mọi lần chạy để báo mean/std,
+không chỉ đưa seed tốt nhất. Phương pháp cũng chọn bằng CV trước đánh giá test.
+Nếu hòa giữa các phương pháp, ưu tiên RF chỉ tối ưu ngưỡng, rồi Random Search,
+rồi TPE để dùng phương án đơn giản hơn. RF mặc định tại 0.5 là mốc tham khảo.
+
+## 7. Protocol tái lập và chống rò rỉ
+
+1. Tải `fetch_openml(data_id=31, as_frame=True)`, kiểm tra shape và nhãn.
+2. Đổi **nhãn** good/bad thành 0/1; giữ nguyên đặc trưng danh mục.
+3. Chia stratified 80/20 bằng seed 42; lưu source row IDs và checksum.
+4. Lưu năm folds phân tầng chỉ trên train, CV seed 42. Mọi phương án dùng
+   cùng folds, thứ tự train và preprocessing.
+5. Mỗi fold dùng pipeline preprocessing và RF; chỉ fit imputer/One-Hot và RF
+   trên train của fold. Không fit encoder trên toàn bộ train trước CV hoặc trên test.
+6. Lấy OOF để tính cost, constraint và chọn ngưỡng/cấu hình. Baseline chỉ
+   tối ưu ngưỡng dùng lưới 0.10-0.90, bước 0.01, áp cùng ràng buộc.
+7. Sau khi chốt phương pháp và nghiệm, fit pipeline mới trên 800 mẫu train;
+   dùng test cho đánh giá cuối. Báo cả feasibility test; không dùng vi phạm
+   test để chỉnh ngưỡng rồi gọi đó là cùng test cuối.
+
+Test được giữ riêng **theo protocol**; việc file có trên GitHub không có
+nghĩa là được dùng nhãn test để chọn nghiệm. Chuẩn bị dữ liệu chỉ ghi thống
+kê lớp và checksum, không đánh giá mô hình.
+
+| Nguồn ngẫu nhiên | Giá trị | Ý nghĩa |
+| --- | --- | --- |
+| Split seed | 42 cố định | Giữ nguyên 800/200 hồ sơ |
+| CV seed | 42 cố định | Giữ nguyên năm folds |
+| RF seed | 42 cố định | Giảm nhiễu khi so cấu hình và thuật toán |
+| Sampler seeds | 42, 100, 2024, 2025, 2026 | Đo độ ổn định do Random Search/TPE |
+
+Mỗi phương pháp tìm kiếm: 50 trials x 5 sampler seeds x 5 folds = 1.250 lần
+fit RF. Baseline và quét ngưỡng ghi chi phí riêng; quét ngưỡng dùng lại OOF
+nên không fit RF cho từng ngưỡng. Chưa dùng pruning/early stopping để giữ
+số lần đánh giá giữa Random Search/TPE tương đương.
+
+## 8. Kế hoạch kết quả ở các tuần tiếp theo
+
+- Bảng cost/sample, FN, FP, recall bad, approval rate, feasibility và runtime.
+- Trial history: method, sampler seed, trial number, params, cost, rejection
+  rate, constraint violation, penalized objective, feasible flag và duration.
+- Đồ thị best-feasible-cost-so-far theo số lần đánh giá; để trống trước trial
+  khả thi đầu tiên, không vẽ penalty như chi phí kinh doanh.
+- Đồ thị cost/approval theo threshold, phân bố kết quả qua sampler seeds.
+- Độ nhạy CV: chi phí FN trong `{2, 5, 10}` và trần từ chối trong
+  `{0.25, 0.35, 0.45}`. Giữ kịch bản chính 5:1/35%.
+- Tiết kiệm tương đối: $100(f_{baseline}-f_{chosen})/f_{baseline}$ nếu
+  $f_{baseline}>0$; báo không xác định khi mẫu số bằng 0. Nêu rõ baseline
+  có khả thi hay không và có thể báo cải thiện âm.
+- Không quy đổi chi phí benchmark thành tiền tiết kiệm thực tế.
+
+## 9. Trạng thái và giới hạn
+
+- [x] Câu hỏi nghiên cứu, biến, objective, constraint và giả định.
+- [x] Baselines, metric, budget, seeds, quy tắc chọn nghiệm và protocol.
+- [x] Code chuẩn bị dữ liệu v2 và transformer chưa fit.
+- [x] Sinh viên chạy v2; xác nhận 800/200 mẫu và 5 folds.
+- [x] Lưu `requirements-lock.txt` sau khi cài môi trường và chạy thành công.
+- [ ] Commit/push checkpoint sau khi kiểm tra output.
+
+Chưa có số liệu thực nghiệm. German Credit nhỏ và cũ; chi phí benchmark và
+ràng buộc giả định chưa phản ánh sản phẩm ngân hàng thực. Năm sampler seeds
+không đại diện cho nhiều mẫu dữ liệu độc lập.
+
+## 10. Nguồn và AI assistance
+
+- [UCI: Statlog (German Credit Data)](https://archive.ics.uci.edu/dataset/144/statlog+german+credit+data).
+- [OpenML ID 31](https://www.openml.org/d/31).
+- Hofmann, H. (1994). Statlog (German Credit Data). [DOI](https://doi.org/10.24432/C5NC77).
+- [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).
+- AI hỗ trợ mô hình hóa, chỉnh code, kiểm tra artifact và cập nhật tài liệu.
+  Sinh viên đã chạy chuẩn bị dữ liệu v2 và lưu phiên bản môi trường.
+  Chưa huấn luyện baseline hoặc chạy tối ưu; sinh viên chịu trách nhiệm
+  hiểu và giải thích dữ liệu, công thức và pipeline.

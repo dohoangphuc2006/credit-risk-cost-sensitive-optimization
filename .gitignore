@@ -7,3 +7,7 @@ venv/
 *.egg-info/
 dist/
 build/
+.cache/
+.env
+.env.*
+!.env.example

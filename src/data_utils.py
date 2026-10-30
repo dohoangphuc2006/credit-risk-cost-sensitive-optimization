@@ -1,168 +1,255 @@
-"""
-src/data_utils.py
-=================
-Module tải tập dữ liệu chuẩn Statlog (German Credit Data) từ OpenML,
-tiền xử lý bảng dữ liệu kinh tế tài chính và chia tách tập Train (80%) / Test (20%)
-cố định với SEED = 42 để chống rò rỉ dữ liệu (Anti-Test-Leakage).
+"""Prepare unencoded train/test files and fixed CV assignments for Week 1.
 
-Đề tài: Cost-Sensitive Machine Learning Optimization for Credit Risk Assessment
-Môn học: Nhập môn Tối ưu hóa – Trường Đại học Văn Lang
-Sinh viên: Đỗ Hoàng Phúc
+Run from the repository root: python -m src.data_utils --force
+No feature transformer or predictive model is fitted by this command.
 """
 
+import argparse
+import hashlib
 import json
+import platform
+from datetime import datetime, timezone
+from importlib.metadata import PackageNotFoundError, version
 from pathlib import Path
 
-import numpy as np
 import pandas as pd
 from sklearn.datasets import fetch_openml
-from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import LabelEncoder
+from sklearn.model_selection import StratifiedKFold, train_test_split
 
-# ==============================================================================
-# Cấu hình cố định – Không thay đổi trong suốt 5 tuần thực nghiệm
-# ==============================================================================
-SEED = 42
+if __package__ in {None, ""}:
+    from config import CONFIG_PATH, DATA_DIR, PROJECT_ROOT, load_config
+else:
+    from .config import CONFIG_PATH, DATA_DIR, PROJECT_ROOT, load_config
 
-# Ma trận chi phí chuẩn của German Credit Data (Hofmann, 1994)
-# FN: Duyệt nhầm kẻ quỵt nợ → mất vốn gốc          (nặng gấp 5 lần)
-# FP: Từ chối nhầm khách hàng tốt → mất tiền lãi   (nhẹ hơn)
-COST_FN = 5   # Chi phí 1 trường hợp False Negative (đơn vị chuẩn)
-COST_FP = 1   # Chi phí 1 trường hợp False Positive (đơn vị chuẩn)
+ARTIFACT_FORMAT_VERSION = 2
+OUTPUT_FILES = (
+    "credit_train.csv", "credit_test.csv", "cv_folds.json", "dataset_metadata.json"
+)
+
+
+def file_sha256(path: Path) -> str:
+    """Compute a checksum without loading an entire file into memory."""
+    digest = hashlib.sha256()
+    with path.open("rb") as stream:
+        for block in iter(lambda: stream.read(1024 * 1024), b""):
+            digest.update(block)
+    return digest.hexdigest()
+
+
+def write_json(path: Path, payload: dict) -> None:
+    with path.open("w", encoding="utf-8", newline="\n") as stream:
+        json.dump(payload, stream, ensure_ascii=False, indent=2, allow_nan=False)
+        stream.write("\n")
+
+
+def _environment_versions() -> dict:
+    packages = {}
+    for package in ("numpy", "pandas", "scikit-learn", "optuna", "matplotlib"):
+        try:
+            packages[package] = version(package)
+        except PackageNotFoundError:
+            packages[package] = "not installed"
+    return {"python": platform.python_version(), "packages": packages}
 
 
 def load_and_split_data(
-    test_size: float = 0.20,
-    random_state: int = SEED
+    test_size: float | None = None,
+    random_state: int | None = None,
 ):
-    """
-    Tải tập dữ liệu Statlog (German Credit) từ kho lưu trữ chuẩn OpenML,
-    mã hóa các biến phân loại danh mục và chia tập Train / Test cố định.
+    """Fetch OpenML ID 31, validate labels, then split unencoded features.
 
-    Parameters
-    ----------
-    test_size     : Tỉ lệ tập Test khóa kín (mặc định 20%).
-    random_state  : Hạt giống ngẫu nhiên cố định (mặc định 42).
-
-    Returns
-    -------
-    X_train, X_test, y_train, y_test : Dữ liệu đã chia tách.
-    metadata                          : Thông số mô tả tập dữ liệu (dict).
+    Overrides are for exploratory use. The CLI uses the canonical configuration.
+    Row indices refer to original source order and are kept in the CSV files.
     """
-    print("Đang tải Statlog (German Credit Data) từ OpenML (ID: 31)...")
+    config = load_config()
+    dataset_config = config["dataset"]
+    test_size = config["split"]["test_size"] if test_size is None else test_size
+    random_state = config["split"]["seed"] if random_state is None else random_state
+    if not 0 < test_size < 1:
+        raise ValueError("test_size must be between 0 and 1.")
     dataset = fetch_openml(
-        name="credit-g",
-        version=1,
+        data_id=dataset_config["openml_id"],
         as_frame=True,
-        parser="auto"
+        parser="auto",
+        data_home=str(PROJECT_ROOT / ".cache" / "openml"),
     )
-    df: pd.DataFrame = dataset.frame.copy()
+    X = dataset.data.copy().reset_index(drop=True)
+    labels = pd.Series(dataset.target).reset_index(drop=True)
+    expected_shape = (
+        dataset_config["expected_samples"], dataset_config["expected_features"]
+    )
+    if X.shape != expected_shape:
+        raise ValueError(f"Unexpected dataset shape {X.shape}; expected {expected_shape}.")
+    if labels.isna().any() or set(labels.astype(str)) != {"good", "bad"}:
+        raise ValueError("Expected exactly the original 'good' and 'bad' labels.")
+    if X.isna().any().any():
+        raise ValueError("Unexpected missing features in the documented dataset.")
+    if not X.columns.is_unique or {"target", "source_row_id"}.intersection(X.columns):
+        raise ValueError("Feature names must be unique and avoid reserved names.")
 
-    # ------------------------------------------------------------------
-    # Chuyển nhãn gốc:  'good' → 0 (Tín dụng tốt)
-    #                   'bad'  → 1 (Rủi ro nợ xấu – lớp thiểu số cần phát hiện)
-    # ------------------------------------------------------------------
-    df["target"] = (df["class"] == "bad").astype(int)
-    df = df.drop(columns=["class"])
-
-    # ------------------------------------------------------------------
-    # Mã hóa biến phân loại bằng Label Encoding
-    # (phù hợp với Random Forest – không cần One-Hot)
-    # ------------------------------------------------------------------
-    cat_cols = df.select_dtypes(include=["category", "object"]).columns.tolist()
-    le = LabelEncoder()
-    for col in cat_cols:
-        df[col] = le.fit_transform(df[col].astype(str))
-
-    X = df.drop(columns=["target"])
-    y = df["target"]
-
-    # ------------------------------------------------------------------
-    # Chia Stratified 80% Train / 20% Test – Khóa cứng tập Test
-    # KHÔNG sử dụng tập Test trong bất kỳ bước tối ưu nào (Tuần 2–4)
-    # Chỉ mở khóa tập Test để đánh giá nghiệm tối ưu cuối cùng (Tuần 4–5)
-    # ------------------------------------------------------------------
+    # Map only the target. Fit feature encoders inside CV in subsequent weeks.
+    y = labels.map({"good": 0, "bad": 1}).astype("int64").rename("target")
+    X.index.name = "source_row_id"
+    y.index.name = "source_row_id"
     X_train, X_test, y_train, y_test = train_test_split(
-        X, y,
-        test_size=test_size,
-        stratify=y,
-        random_state=random_state
+        X, y, test_size=test_size, stratify=y, random_state=random_state
     )
+    if set(X_train.index).intersection(X_test.index):
+        raise ValueError("Train/test source row IDs overlap.")
+    if y_train.value_counts().min() < config["cv"]["n_splits"]:
+        raise ValueError("Insufficient training examples per class for stratified CV.")
 
-    n_bad_train  = int(y_train.sum())
-    n_good_train = int(len(y_train) - n_bad_train)
-    n_bad_test   = int(y_test.sum())
-    n_good_test  = int(len(y_test) - n_bad_test)
+    def summarize(target: pd.Series) -> dict:
+        return {
+            "n_samples": len(target),
+            "n_good": int(target.eq(0).sum()),
+            "n_bad": int(target.eq(1).sum()),
+        }
 
     metadata = {
-        "dataset_name":        "Statlog (German Credit Data)",
-        "openml_id":           31,
-        "source_url":          "https://www.openml.org/d/31",
-        "uci_url":             "https://archive.ics.uci.edu/dataset/144/statlog+german+credit+data",
-        "author":              "Prof. Dr. Hans Hofmann, University of Hamburg (1994)",
-        "license":             "Public – phục vụ nghiên cứu và giảng dạy",
-        "n_total_samples":     int(len(df)),
-        "n_features_raw":      20,
-        "n_features_encoded":  int(X.shape[1]),
-        "label_encoding":      "0 = Good Credit (Tín dụng tốt), 1 = Bad Credit (Rủi ro nợ xấu)",
-        "class_distribution":  {
-            "good_credit":     int((y == 0).sum()),
-            "bad_credit":      int((y == 1).sum())
-        },
-        "cost_matrix": {
-            "cost_fn": COST_FN,
-            "cost_fp": COST_FP,
-            "ratio_fn_to_fp": f"{COST_FN}:{COST_FP}",
-            "note": "Nguồn: Hofmann (1994) – chuẩn benchmark quốc tế"
-        },
-        "train_set": {
-            "n_samples":    int(len(X_train)),
-            "n_good":       n_good_train,
-            "n_bad":        n_bad_train,
-            "bad_ratio_pct": round(n_bad_train / len(X_train) * 100, 2)
-        },
-        "test_set": {
-            "n_samples":    int(len(X_test)),
-            "n_good":       n_good_test,
-            "n_bad":        n_bad_test,
-            "bad_ratio_pct": round(n_bad_test / len(X_test) * 100, 2)
-        },
-        "split_config": {
-            "ratio":        "80% Train (5-Fold Stratified CV) / 20% Locked Test",
-            "random_seed":  random_state,
-            "stratified":   True
-        }
+        "artifact_format_version": ARTIFACT_FORMAT_VERSION,
+        "created_at_utc": datetime.now(timezone.utc).isoformat(),
+        "dataset_name": "Statlog (German Credit Data)",
+        "openml_id": dataset_config["openml_id"],
+        "openml_version": dataset.details.get("version"),
+        "source_url": "https://www.openml.org/d/31",
+        "uci_url": "https://archive.ics.uci.edu/dataset/144/statlog+german+credit+data",
+        "citation": "Hofmann, H. (1994). Statlog (German Credit Data). UCI Machine Learning Repository.",
+        "doi": "10.24432/C5NC77",
+        "license": "CC BY 4.0 (UCI dataset page)",
+        "representation": "raw_features_no_fitted_preprocessing",
+        "n_total_samples": len(X),
+        "n_features_raw": X.shape[1],
+        "feature_columns": X.columns.tolist(),
+        "categorical_columns": X.select_dtypes(
+            include=["category", "object", "string"]
+        ).columns.tolist(),
+        "numeric_columns": X.select_dtypes(include="number").columns.tolist(),
+        "target_mapping": {"good": 0, "bad": 1},
+        "class_distribution": summarize(y),
+        "train_set": summarize(y_train),
+        "test_set": summarize(y_test),
+        "split_config": {"test_size": test_size, "seed": random_state, "stratified": True},
+        "train_source_row_ids": X_train.index.tolist(),
+        "test_source_row_ids": X_test.index.tolist(),
+        "experiment_config": config,
+        "config_sha256": file_sha256(CONFIG_PATH),
+        "environment": _environment_versions(),
+        "test_usage": "Final evaluation after method and configuration selection on train CV.",
+        "experiment_results": "Not generated by Week 1 data preparation.",
     }
-
     return X_train, X_test, y_train, y_test, metadata
 
 
+def prepare_data(force: bool = False) -> dict:
+    """Write data artifacts; require explicit replacement of existing files."""
+    existing = [name for name in OUTPUT_FILES if (DATA_DIR / name).exists()]
+    if existing and not force:
+        raise FileExistsError(
+            "Data artifacts already exist: " + ", ".join(existing)
+            + ". To regenerate legacy files, run python -m src.data_utils --force."
+        )
+    X_train, X_test, y_train, y_test, metadata = load_and_split_data()
+    config = metadata["experiment_config"]
+    cv_config = config["cv"]
+    splitter = StratifiedKFold(
+        n_splits=cv_config["n_splits"],
+        shuffle=cv_config["shuffle"],
+        random_state=cv_config["seed"],
+    )
+    folds = {
+        "artifact_format_version": ARTIFACT_FORMAT_VERSION,
+        "cv_config": cv_config,
+        "index_type": "source_row_id",
+        "folds": [
+            {"fold": fold, "validation_row_ids": X_train.index[validation].tolist()}
+            for fold, (_, validation) in enumerate(splitter.split(X_train, y_train))
+        ],
+    }
+    validation_ids = [
+        row_id for fold in folds["folds"] for row_id in fold["validation_row_ids"]
+    ]
+    if len(validation_ids) != len(set(validation_ids)) or set(validation_ids) != set(X_train.index):
+        raise ValueError("Each training row must occur in exactly one validation fold.")
+
+    DATA_DIR.mkdir(parents=True, exist_ok=True)
+    for name, features, target in (
+        ("credit_train.csv", X_train, y_train),
+        ("credit_test.csv", X_test, y_test),
+    ):
+        features.assign(target=target).to_csv(
+            DATA_DIR / name, index=True, index_label="source_row_id", encoding="utf-8"
+        )
+    write_json(DATA_DIR / "cv_folds.json", folds)
+    metadata["file_sha256"] = {
+        name: file_sha256(DATA_DIR / name)
+        for name in OUTPUT_FILES if name != "dataset_metadata.json"
+    }
+    # Metadata is written last; checksum validation detects mixed/partial outputs.
+    write_json(DATA_DIR / "dataset_metadata.json", metadata)
+    return metadata
+
+
+def _read_metadata(data_dir: Path) -> dict:
+    with (data_dir / "dataset_metadata.json").open(encoding="utf-8") as stream:
+        metadata = json.load(stream)
+    if metadata.get("artifact_format_version") != ARTIFACT_FORMAT_VERSION:
+        raise ValueError("Legacy artifacts detected. Run python -m src.data_utils --force first.")
+    if metadata["config_sha256"] != file_sha256(CONFIG_PATH):
+        raise ValueError("Configuration changed since preparation; regenerate data artifacts.")
+    return metadata
+
+
+def _verify_artifact(path: Path, metadata: dict) -> None:
+    if file_sha256(path) != metadata["file_sha256"][path.name]:
+        raise ValueError(f"Checksum mismatch: {path.name}. Regenerate data artifacts.")
+
+
+def load_training_data(data_dir: Path = DATA_DIR) -> tuple[pd.DataFrame, pd.Series]:
+    """Read only training CSV and metadata; never read the test CSV."""
+    data_dir = Path(data_dir)
+    metadata = _read_metadata(data_dir)
+    path = data_dir / "credit_train.csv"
+    _verify_artifact(path, metadata)
+    frame = pd.read_csv(path, index_col="source_row_id")
+    y = frame.pop("target").astype("int64")
+    if frame.index.tolist() != metadata["train_source_row_ids"]:
+        raise ValueError("Training row IDs differ from the saved split.")
+    if frame.columns.tolist() != metadata["feature_columns"]:
+        raise ValueError("Training schema differs from the saved schema.")
+    return frame, y
+
+
+def load_cv_splits(X_train: pd.DataFrame, data_dir: Path = DATA_DIR) -> list:
+    """Convert saved source row IDs into positional indices for sklearn CV."""
+    data_dir = Path(data_dir)
+    metadata = _read_metadata(data_dir)
+    if not X_train.index.is_unique or X_train.index.tolist() != metadata["train_source_row_ids"]:
+        raise ValueError("Pass the original ordered data from load_training_data().")
+    path = data_dir / "cv_folds.json"
+    _verify_artifact(path, metadata)
+    with path.open(encoding="utf-8") as stream:
+        payload = json.load(stream)
+    splits = []
+    for fold in payload["folds"]:
+        validation_mask = X_train.index.isin(fold["validation_row_ids"])
+        splits.append(((~validation_mask).nonzero()[0], validation_mask.nonzero()[0]))
+    return splits
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--force", action="store_true", help="Replace existing data artifacts.")
+    args = parser.parse_args()
+    try:
+        metadata = prepare_data(force=args.force)
+    except (FileExistsError, ValueError) as error:
+        parser.exit(status=1, message=f"Preparation stopped: {error}\n")
+    print(f"Prepared OpenML ID {metadata['openml_id']} in {DATA_DIR}")
+    print(f"Train: {metadata['train_set']['n_samples']} rows; test: {metadata['test_set']['n_samples']} rows.")
+    print(f"Saved {metadata['experiment_config']['cv']['n_splits']} fixed CV folds and SHA-256 checksums.")
+    print("Features are unencoded. No model training or test evaluation has been performed.")
+
+
 if __name__ == "__main__":
-    out_dir = Path("data")
-    out_dir.mkdir(exist_ok=True)
-
-    X_train, X_test, y_train, y_test, meta = load_and_split_data()
-
-    # Lưu metadata dạng JSON để kiểm chứng
-    with open(out_dir / "dataset_metadata.json", "w", encoding="utf-8") as f:
-        json.dump(meta, f, indent=4, ensure_ascii=False)
-
-    # Lưu tập Train và Test dạng CSV
-    train_df = X_train.copy()
-    train_df["target"] = y_train.values
-    train_df.to_csv(out_dir / "credit_train.csv", index=False)
-
-    test_df = X_test.copy()
-    test_df["target"] = y_test.values
-    test_df.to_csv(out_dir / "credit_test.csv", index=False)
-
-    # In tóm tắt để xác nhận
-    print("\n" + "=" * 60)
-    print("  Khởi tạo dữ liệu German Credit thành công!")
-    print("=" * 60)
-    print(json.dumps(meta, indent=2, ensure_ascii=False))
-    print("=" * 60)
-    print(f"  credit_train.csv : {len(train_df):>5} dòng  →  data/credit_train.csv")
-    print(f"  credit_test.csv  : {len(test_df):>5} dòng  →  data/credit_test.csv")
-    print(f"  dataset_metadata.json           →  data/dataset_metadata.json")
-    print("=" * 60)
+    main()
