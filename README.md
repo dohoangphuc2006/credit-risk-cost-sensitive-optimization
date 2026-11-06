@@ -7,7 +7,7 @@ Bài tập lớn cá nhân môn Nhập môn Tối ưu hóa, thực hiện trong 
 - **Sinh viên:** Đỗ Hoàng Phúc
 - **Chuyên ngành:** Trí tuệ nhân tạo, Trường Đại học Văn Lang
 - **Sản phẩm:** GitHub repository gồm mã nguồn, mô hình hóa, log và hình kết quả.
-- **Checkpoint:** Đã hoàn thành chuẩn bị dữ liệu tuần 1: 800 mẫu train, 200 mẫu test, 5 CV folds và file phiên bản môi trường. Đã kiểm tra dữ liệu và checksum; chờ commit/push.
+- **Checkpoint:** Đã chạy baseline tuần 2, tạo kết quả OOF, hình và metadata; chờ kiểm tra thay đổi và commit/push.
 
 ## 1. Problem
 
@@ -110,35 +110,73 @@ nhưng không được xem là một phương án triển khai khả thi.
 
 ## 5. Key results and five-week plan
 
-**Chưa có số liệu baseline hoặc tối ưu.** Không dùng số liệu dự kiến làm kết quả.
+### Bảng kết quả thực nghiệm Baseline (Tuần 2)
+
+Thực nghiệm trên 800 mẫu Train qua 5-Fold Stratified CV cố định (Ma trận chi phí $C_{\mathrm{FN}} = 5$, $C_{\mathrm{FP}} = 1$; Ràng buộc Rejection Rate $\le 35\%$):
+
+| Chỉ số thực nghiệm | RF mặc định ($\tau = 0.50$) | Baseline tối ưu ngưỡng ($\tau^* = 0.38$) | Chênh lệch / Cải thiện |
+| :--- | :---: | :---: | :---: |
+| **Chi phí trung bình / mẫu $f(z)$** | **0.9762** | **0.7200** | **-26.25% (Tiết kiệm chi phí)** |
+| Tổng chi phí tổn thất (800 mẫu) | 781 đơn vị | 576 đơn vị | Giảm 205 đơn vị chi phí |
+| False Negative (lọt nợ xấu - phạt 5) | 146 ca | 90 ca | Giảm 56 mẫu bad bị bỏ sót |
+| False Positive (từ chối nhầm - phạt 1)| 51 ca | 126 ca | Tăng 75 ca từ chối nhầm |
+| Tỷ lệ từ chối hồ sơ $r(z)$ | 18.12% | 34.50% | Thỏa mãn ràng buộc $\le 35\%$ |
+| Tỷ lệ phê duyệt hồ sơ | 81.88% | 65.50% | Thỏa giả định phê duyệt $\ge 65\%$ |
+| Tính khả thi (Feasible?) | **Có (Khả thi)** | **Có (Khả thi)** | Cả hai đều nằm trong miền khả thi |
+| Recall nhận diện nợ xấu (Class 1) | 39.17% | 62.50% | Tăng 23.33 điểm phần trăm |
+| Macro-F1 score | 0.6631 | 0.6911 | Tăng +0.0280 |
+
+> **Kết quả trước lần chỉnh code:** Bảng này khớp với kết quả baseline đã lưu sau khi chạy phiên bản mới.
+
+> **Nhận xét tối ưu:** Trên OOF của tập train, ngưỡng được chọn trong lưới giúp giảm 26.25% chi phí theo ma trận giả định 5:1, đồng thời thỏa tỷ lệ từ chối ≤35%. Đây là kết quả lựa chọn cấu hình trên cùng OOF, chưa được xác nhận trên test độc lập và không chứng minh mức tiết kiệm tiền thật. Tuần 3 sẽ so sánh Random Search và TPE với mốc này.
+
+![Cost vs Threshold](figures/week2_cost_vs_threshold.png)
+
+### Lộ trình 05 Tuần
 
 | Tuần | Nội dung | Sản phẩm trong repo | Trạng thái |
-| --- | --- | --- | --- |
-| 1 | Chốt câu hỏi, mô hình hóa, nguồn dữ liệu, config, split/CV và preprocessing | Code, README, formulation, dữ liệu v2, CV folds, metadata và requirements-lock.txt | Đã chuẩn bị và kiểm tra dữ liệu; chờ commit/push |
-| 2 | Chạy baseline mặc định và baseline tối ưu ngưỡng | Notebook/source, bảng CV và log | Dự kiến |
-| 3 | Cài objective, penalty, Random Search và TPE | Source, CSV/JSON trial history, best-feasible-so-far plot | Dự kiến |
-| 4 | Chạy nhiều sampler seeds; phân tích độ ổn định và độ nhạy trên CV | Bảng mean/std, runtime, cost/approval trade-off, sensitivity | Dự kiến |
-| 5 | Chốt nghiệm bằng CV, đánh giá test cuối, hoàn thiện portfolio | Bảng kết quả, figures, hướng dẫn tái lập, release `v1.0` | Dự kiến |
+| :--- | :--- | :--- | :---: |
+| **1** | Chốt câu hỏi, mô hình hóa toán học, nguồn dữ liệu, split/CV chống rò rỉ và pipeline tiền xử lý | `src/data_utils.py`, `report/week1_formulation.md`, `configs/experiment.json`, data v2 | ✅ Hoàn thành |
+| **2** | Chạy thực nghiệm Baseline mặc định và Baseline quét ngưỡng trên 5-Fold CV; trực quan hóa đồ thị | `src/baseline.py`, `notebooks/01_baseline.ipynb`, `results/`, `figures/` | Đã chạy; chờ commit/push |
+| **3** | Cài đặt hàm mục tiêu có phạt (Penalty Function), chạy Random Search và Optuna TPE trên 5 biến | Source tối ưu, log trials CSV/JSON, đồ thị hội tụ Best-so-far | 📅 Dự kiến |
+| **4** | Thực nghiệm trên 5 sampler seeds; phân tích độ ổn định (Boxplot) và độ nhạy chi phí | Bảng thống kê mean/std, phân tích trade-off và sensitivity | 📅 Dự kiến |
+| **5** | Chốt cấu hình tối ưu theo CV, đánh giá khách quan trên 200 mẫu Test, hoàn thiện Portfolio | Bảng so sánh toàn diện, kiểm chứng Test set, đóng gói Release `v1.0` | 📅 Dự kiến |
 
 Tài liệu mô hình hóa nằm trong repository; sản phẩm của dự án là repo GitHub.
 
-## 6. How to run Week 1 (PowerShell)
+## 6. How to run (PowerShell)
 
-Mở terminal tại thư mục gốc repo. Khuyến nghị Python 3.11; code yêu cầu Python
-3.10 trở lên. Các lệnh dùng trực tiếp Python trong venv nên không cần thay
-PowerShell execution policy để kích hoạt môi trường.
+Mở terminal tại thư mục gốc repo. Nếu đã có môi trường và dữ liệu tuần 1, chỉ chạy:
 
 ```powershell
-python --version
-python -m venv .venv
-.\.venv\Scripts\python.exe -m pip install --upgrade pip
-.\.venv\Scripts\python.exe -m pip install -r requirements.txt
-.\.venv\Scripts\python.exe -m src.data_utils --force
+.\.venv\Scripts\python.exe -m src.baseline
 ```
 
-`--force` thay thế hai CSV train/test và metadata cũ, đồng thời ghi
-`data/cv_folds.json`. Lệnh tải đúng OpenML ID 31 và cần Internet ở lần đầu;
-cache nằm trong `.cache/`, đã được Git bỏ qua. Split seed vẫn là 42.
+Lệnh cập nhật hai JSON baseline, bảng `threshold_sweep.csv`, ba hình và thêm:
+- `results/baseline_oof.csv`: row ID, nhãn thật, fold và xác suất bad của từng mẫu train.
+- `results/baseline_run_metadata.json`: thời gian, seed/config, phiên bản thư viện,
+  tham số mô hình và checksum dữ liệu train, folds, code, kết quả.
+
+Khi cài lần đầu trên máy khác:
+
+```powershell
+python -m venv .venv
+.\.venv\Scripts\python.exe -m pip install -r requirements-lock.txt
+```
+
+Dùng dữ liệu và folds đã lưu trong repo. Chỉ khi cần tạo lại dữ liệu, chạy
+`.\.venv\Scripts\python.exe -m src.data_utils --force`; lệnh này ghi đè artifact
+và có thể cần Internet. Không cần chạy lại chuẩn bị dữ liệu mỗi lần chạy baseline.
+
+Để dùng notebook trong VS Code, cài extension Python và Jupyter, cài kernel:
+
+```powershell
+.\.venv\Scripts\python.exe -m pip install ipykernel
+```
+
+Mở `notebooks/01_baseline.ipynb`, chọn kernel `.venv`, chọn **Run All**, rồi lưu.
+Notebook gọi cùng pipeline với CLI để tạo đồng bộ kết quả và hình; chọn một trong
+hai cách chạy là đủ. Notebook chưa được thực thi lại sau lần chỉnh sửa này.
 
 Đầu ra của lần chuẩn bị dữ liệu thành công (đường dẫn rút gọn):
 
@@ -210,22 +248,22 @@ credit-risk-cost-sensitive-optimization/
 - **AI assistance:** AI hỗ trợ mô hình hóa, viết/chỉnh code chuẩn bị dữ liệu,
   preprocessing và tài liệu tuần 1. Sinh viên đã chạy chuẩn bị dữ liệu v2
   và lưu phiên bản môi trường; dữ liệu và checksum đã được kiểm tra khi
-  cập nhật checkpoint. Chưa huấn luyện baseline hoặc chạy tối ưu.
+  cập nhật checkpoint. Đã có kết quả baseline tuần 2; AI hỗ trợ sửa lỗi notebook,
+  bổ sung log và diễn giải kết quả. Sinh viên đã chạy lại phiên bản chỉnh sửa và tạo kết quả OOF cùng metadata.
+  Chưa có kết quả Random Search/TPE hoặc đánh giá test.
   Sinh viên chịu trách nhiệm hiểu và giải thích từng bước của dự án.
 
 ## 9. Commit and push after running
 
-Sau khi chuẩn bị dữ liệu thành công, cập nhật trạng thái tuần 1 trong README
-và kiểm tra thay đổi trước khi đẩy lên GitHub:
+Sau khi chạy tuần 2 thành công, kiểm tra bảng số liệu mới, cập nhật checkpoint và
+trạng thái tuần 2 ở trên. Chỉ giữ con số trong bảng nếu khớp JSON vừa xuất.
 
 ```powershell
 git status --short
-git diff --stat
 git diff --check
-git add README.md .gitignore requirements.txt configs src data report/week1_formulation.md
-git add requirements-lock.txt
+git add README.md src/baseline.py notebooks/01_baseline.ipynb results/baseline_default.json results/baseline_threshold_sweep.json results/threshold_sweep.csv results/baseline_oof.csv results/baseline_run_metadata.json figures/week2_cm_baseline_default.png figures/week2_cm_baseline_threshold_opt.png figures/week2_cost_vs_threshold.png
 git diff --cached --stat
-git commit -m "feat(week1): finalize formulation and reproducible data preparation"
+git commit -m "feat(week2): add reproducible baselines and OOF analysis"
 git push origin main
 ```
 

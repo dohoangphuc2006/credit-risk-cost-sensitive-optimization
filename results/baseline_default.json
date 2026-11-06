@@ -1,0 +1,88 @@
+{
+  "method": "RF_default_threshold_0.5",
+  "threshold": 0.5,
+  "model_params": "scikit-learn defaults (n_estimators=100, max_depth=None, class_weight=None)",
+  "pooled_oof": {
+    "n_samples": 800,
+    "TN": 509,
+    "FP": 51,
+    "FN": 146,
+    "TP": 94,
+    "total_cost": 781.0,
+    "cost_per_sample": 0.97625,
+    "rejection_rate": 0.18125,
+    "approval_rate": 0.81875
+  },
+  "constraint_g": -0.1687,
+  "feasible": true,
+  "max_rejection_rate": 0.35,
+  "ml_metrics": {
+    "accuracy": 0.7538,
+    "precision_bad": 0.6483,
+    "recall_bad": 0.3917,
+    "f1_bad": 0.4883,
+    "f1_macro": 0.6631
+  },
+  "fold_details": [
+    {
+      "n_samples": 160,
+      "TN": 104,
+      "FP": 8,
+      "FN": 28,
+      "TP": 20,
+      "total_cost": 148.0,
+      "cost_per_sample": 0.925,
+      "rejection_rate": 0.175,
+      "approval_rate": 0.825,
+      "fold": 0
+    },
+    {
+      "n_samples": 160,
+      "TN": 102,
+      "FP": 10,
+      "FN": 29,
+      "TP": 19,
+      "total_cost": 155.0,
+      "cost_per_sample": 0.96875,
+      "rejection_rate": 0.18125,
+      "approval_rate": 0.81875,
+      "fold": 1
+    },
+    {
+      "n_samples": 160,
+      "TN": 98,
+      "FP": 14,
+      "FN": 30,
+      "TP": 18,
+      "total_cost": 164.0,
+      "cost_per_sample": 1.025,
+      "rejection_rate": 0.2,
+      "approval_rate": 0.8,
+      "fold": 2
+    },
+    {
+      "n_samples": 160,
+      "TN": 103,
+      "FP": 9,
+      "FN": 33,
+      "TP": 15,
+      "total_cost": 174.0,
+      "cost_per_sample": 1.0875,
+      "rejection_rate": 0.15,
+      "approval_rate": 0.85,
+      "fold": 3
+    },
+    {
+      "n_samples": 160,
+      "TN": 102,
+      "FP": 10,
+      "FN": 26,
+      "TP": 22,
+      "total_cost": 140.0,
+      "cost_per_sample": 0.875,
+      "rejection_rate": 0.2,
+      "approval_rate": 0.8,
+      "fold": 4
+    }
+  ]
+}

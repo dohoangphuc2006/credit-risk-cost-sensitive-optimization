@@ -1,0 +1,131 @@
+{
+  "created_at_utc": "2026-11-06T08:42:30.982271+00:00",
+  "elapsed_seconds": 1.3941935999991983,
+  "environment": {
+    "python": "3.12.10",
+    "packages": {
+      "numpy": "2.5.4",
+      "pandas": "3.1.0",
+      "scikit-learn": "1.9.1",
+      "optuna": "5.0.0",
+      "matplotlib": "3.11.2"
+    }
+  },
+  "config": {
+    "dataset": {
+      "openml_id": 31,
+      "name": "credit-g",
+      "expected_samples": 1000,
+      "expected_features": 20
+    },
+    "split": {
+      "test_size": 0.2,
+      "seed": 42
+    },
+    "cv": {
+      "n_splits": 5,
+      "shuffle": true,
+      "seed": 42
+    },
+    "model_seed": 42,
+    "optimization": {
+      "trials_per_seed": 50,
+      "sampler_seeds": [
+        42,
+        100,
+        2024,
+        2025,
+        2026
+      ],
+      "search_space": {
+        "threshold": {
+          "type": "float",
+          "low": 0.1,
+          "high": 0.9
+        },
+        "n_estimators": {
+          "type": "int",
+          "low": 20,
+          "high": 200
+        },
+        "max_depth": {
+          "type": "int",
+          "low": 2,
+          "high": 15
+        },
+        "min_samples_split": {
+          "type": "int",
+          "low": 2,
+          "high": 20
+        },
+        "bad_class_weight": {
+          "type": "float",
+          "low": 1.0,
+          "high": 10.0
+        }
+      }
+    },
+    "cost": {
+      "false_negative": 5.0,
+      "false_positive": 1.0
+    },
+    "policy": {
+      "max_rejection_rate": 0.35,
+      "constraint_scope": "pooled_train_oof",
+      "penalty_multiplier": 10.0
+    },
+    "sensitivity": {
+      "planned_max_rejection_rates": [
+        0.25,
+        0.35,
+        0.45
+      ],
+      "planned_false_negative_costs": [
+        2.0,
+        5.0,
+        10.0
+      ]
+    }
+  },
+  "config_sha256": "e906d974ddd2ab383c526104b7580634802a838655cdd921a1112d6a3a3f4207",
+  "input_sha256": {
+    "credit_train.csv": "8281704fe68e1ce1747342a0125560399f09e2ce8d9f88dec24c3f4dbf5d97bc",
+    "cv_folds.json": "d78957043cee5a641883146569c445b12f3353b7c419f500ffdfe26fee112a25",
+    "dataset_metadata.json": "8b37670eec450319d0545c5bf57bc2dcb9e29e1965ea82fe5b1c5fb38bb7596b"
+  },
+  "code_sha256": {
+    "baseline.py": "7807f35bc8486a6be29c5a2a09ac4fa99a3b7492a430bac7541231468bcf4e0d",
+    "preprocessing.py": "f6063906e336f6987ca493a0d783da1065c3802f43966b68cb8ed8052f34a8d1",
+    "data_utils.py": "be7da2171ce686a2fcba0b138c1e58319299485ff1783dccb4b32f0644cbf3aa",
+    "config.py": "78e0acd5e534eb490a4752321760eb250c2d57ab9ea84731d8eeb4b8dd269bc1"
+  },
+  "result_sha256": {
+    "baseline_default.json": "fab840d11511515f8283a805dee4dc621716dadb5d0fc951310e159188511cbc",
+    "baseline_threshold_sweep.json": "10e2f510293f1e0a3624e4403e7da5278ff93aecaaf06bbde21ac1c2815a395e",
+    "threshold_sweep.csv": "a995bdb702a2889c4afc05f8d7ed0910ab4f2e992636b8ce6d88772a6c286d19",
+    "baseline_oof.csv": "999d527801a89030624b5244ffb81391af29c368bf6341c8a13495bdce607260"
+  },
+  "evaluation_scope": "pooled_train_oof; threshold selected on same OOF; test unused",
+  "tie_break": "lowest threshold among equal minimum feasible costs on grid",
+  "model_params": {
+    "bootstrap": true,
+    "ccp_alpha": 0.0,
+    "class_weight": null,
+    "criterion": "gini",
+    "max_depth": null,
+    "max_features": "sqrt",
+    "max_leaf_nodes": null,
+    "max_samples": null,
+    "min_impurity_decrease": 0.0,
+    "min_samples_leaf": 1,
+    "min_samples_split": 2,
+    "min_weight_fraction_leaf": 0.0,
+    "monotonic_cst": null,
+    "n_estimators": 100,
+    "n_jobs": 1,
+    "oob_score": false,
+    "random_state": 42,
+    "verbose": 0,
+    "warm_start": false
+  }
+}
