@@ -7,7 +7,7 @@ Bài tập lớn cá nhân môn Nhập môn Tối ưu hóa, thực hiện trong 
 - **Sinh viên:** Đỗ Hoàng Phúc
 - **Chuyên ngành:** Trí tuệ nhân tạo, Trường Đại học Văn Lang
 - **Sản phẩm:** GitHub repository gồm mã nguồn, mô hình hóa, log và hình kết quả.
-- **Checkpoint:** Đã chạy thực nghiệm tuần 3 với sampler seed 42, đủ 50 trials cho mỗi phương pháp; kết quả đã kiểm tra và chờ commit/push.
+- **Checkpoint:** Tuần 4 đã chạy đủ 5 seeds và 4 kịch bản độ nhạy; kết quả đã kiểm tra, chờ push. Checkpoint tiếp tục chạy đã được bổ sung sau thực nghiệm.
 
 ## 1. Problem
 
@@ -147,14 +147,38 @@ Random Search đạt chi phí thấp nhất trong lần chạy seed 42, thấp h
 
 [Bảng so sánh và log tuần 3](results/week3/run-20261108T052245407488Z/) · [Đồ thị best feasible](results/week3/run-20261108T052245407488Z/best_feasible_cost.png)
 
+### Kết quả tuần 4
+
+Đã kiểm tra đủ 16 lượt tìm kiếm mới và checksum đầu ra của lần chạy
+[run-20261108T055756731500Z](results/week4/run-20261108T055756731500Z/).
+Tổng hợp kịch bản chính qua 5 sampler seeds (bao gồm seed 42 tuần 3):
+
+| Phương pháp | Chi phí OOF trung bình | Sample SD | Seeds khả thi | Thời gian trung bình (giây) |
+| --- | ---: | ---: | ---: | ---: |
+| Random Search | 0.74525 | 0.02825 | 5/5 | 40.28 |
+| TPE | 0.69625 | 0.01225 | 5/5 | 36.65 |
+
+TPE có chi phí thấp hơn trong 4/5 cặp seeds; mean thấp hơn Random Search khoảng
+6.57% và thấp hơn baseline tối ưu ngưỡng (0.72) khoảng 3.30%. SD thấp hơn cho
+thấy dao động nhỏ hơn trong 5 lần tìm kiếm này trên cùng split/CV. Chưa suy ra
+ý nghĩa thống kê hay khả năng tổng quát trên test. Runtime chịu ảnh hưởng tải máy.
+
+Độ nhạy seed 42: TPE đạt cost 0.35875 khi FN=2, 1.295 khi FN=10,
+0.83625 khi trần từ chối=25%, và 0.59 khi trần=45%. Với FN=10, Random Search
+(1.2675) và baseline tối ưu ngưỡng (1.2825) đều thấp hơn TPE. Vì vậy, không có
+phương pháp thắng mọi kịch bản. So sánh cost chỉ trong cùng ma trận chi phí.
+
+![Độ ổn định và runtime](results/week4/run-20261108T055756731500Z/figures/seed_stability_runtime.png)
+![Phân tích độ nhạy](results/week4/run-20261108T055756731500Z/figures/sensitivity.png)
+
 ### Lộ trình 05 Tuần
 
 | Tuần | Nội dung | Sản phẩm trong repo | Trạng thái |
 | :--- | :--- | :--- | :---: |
 | **1** | Chốt câu hỏi, mô hình hóa toán học, nguồn dữ liệu, split/CV chống rò rỉ và pipeline tiền xử lý | `src/data_utils.py`, `report/week1_formulation.md`, `configs/experiment.json`, data v2 | ✅ Hoàn thành |
 | **2** | Chạy thực nghiệm Baseline mặc định và Baseline quét ngưỡng trên 5-Fold CV; trực quan hóa đồ thị | `src/baseline.py`, `notebooks/01_baseline.ipynb`, `results/`, `figures/` | Đã chạy và push |
-| **3** | Cài đặt hàm mục tiêu có phạt (Penalty Function), chạy Random Search và Optuna TPE trên 5 biến | Source tối ưu, log trials CSV/JSON, đồ thị hội tụ Best-so-far | Đã chạy seed 42; chờ push |
-| **4** | Thực nghiệm trên 5 sampler seeds; phân tích độ ổn định (Boxplot) và độ nhạy chi phí | Bảng thống kê mean/std, phân tích trade-off và sensitivity | 📅 Dự kiến |
+| **3** | Cài đặt hàm mục tiêu có phạt (Penalty Function), chạy Random Search và Optuna TPE trên 5 biến | Source tối ưu, log trials CSV/JSON, đồ thị hội tụ Best-so-far | Đã chạy seed 42 và push |
+| **4** | Thực nghiệm trên 5 sampler seeds; phân tích độ ổn định (Boxplot) và độ nhạy chi phí | Bảng thống kê mean/std, phân tích trade-off và sensitivity | Đã chạy và kiểm tra; chờ push |
 | **5** | Chốt cấu hình tối ưu theo CV, đánh giá khách quan trên 200 mẫu Test, hoàn thiện Portfolio | Bảng so sánh toàn diện, kiểm chứng Test set, đóng gói Release `v1.0` | 📅 Dự kiến |
 
 Tài liệu mô hình hóa nằm trong repository; sản phẩm của dự án là repo GitHub.
@@ -291,6 +315,121 @@ Tùy chọn `--trials 2` chỉ dành cho kiểm tra luồng chạy, không thay 
 nộp bài; metadata ghi rõ ngân sách khác kế hoạch. Code cũng nhận nhiều seeds
 qua `--seeds` để dùng ở tuần 4; tuần 3 chỉ cần lệnh mặc định ở trên.
 
+### Chạy tuần 4: độ ổn định và độ nhạy
+
+Chỉ cần chạy **một lần lệnh** dưới đây; chương trình tự chạy các seeds và kịch bản:
+
+```powershell
+.\.venv\Scripts\python.exe -m src.week4
+```
+
+Có thể kiểm tra dữ liệu, baseline và khả năng dùng lại tuần 3 trước (không train,
+không tạo kết quả thực nghiệm):
+
+```powershell
+.\.venv\Scripts\python.exe -m src.week4 --check-only
+```
+
+Chương trình mặc định dùng lại seed 42 từ
+`results/week3/run-20261108T052245407488Z`. Nó kiểm tra trạng thái hoàn tất,
+50 trials mỗi phương pháp, config, phiên bản thư viện, checksum dữ liệu, code
+và file kết quả. Không tự chọn lần chạy có kết quả đẹp nhất. Nếu các kiểm tra
+không khớp, chương trình dừng để xử lý nguyên nhân; không tự bỏ qua kiểm tra.
+`--reuse` cho phép chỉ định rõ một thư mục tuần 3 khác trong repo, nếu cần.
+
+| Phần thực nghiệm | Cách thực hiện | Số lần fit RF mới |
+| --- | --- | ---: |
+| Độ ổn định kịch bản chính | Thêm seeds 100, 2024, 2025, 2026; 2 phương pháp × 50 trials × 5 folds | 2.000 |
+| Độ nhạy | 4 kịch bản mới × 2 phương pháp × 50 trials × 5 folds, chỉ seed 42 | 2.000 |
+| Tổng cần chạy mới ở tuần 4 | 800 trials | **4.000** |
+
+Kịch bản chính giữ chi phí FN:FP = 5:1 và trần từ chối 35%. Độ nhạy thay **một
+nhân tố mỗi lần**, không phải lưới 3×3:
+
+- `fn2`: chi phí FN = 2; FP = 1; trần từ chối 35%.
+- `fn10`: chi phí FN = 10; FP = 1; trần từ chối 35%.
+- `rejection25`: chi phí 5:1; trần từ chối 25%.
+- `rejection45`: chi phí 5:1; trần từ chối 45%.
+
+Mỗi kịch bản chạy lại Random Search và TPE từ đầu bằng config hiệu lực riêng.
+Config gốc, split và folds không bị ghi đè. Penalty dùng `max(C_FN, C_FP)` của
+kịch bản đó. Baseline RF mặc định dùng lại xác suất OOF; tính lại chi phí và
+chọn lại ngưỡng từ lưới cố định cho mỗi kịch bản, không cần fit lại RF. Kịch bản
+chính seed 42 được dùng lại ở biểu đồ độ nhạy để tránh chạy trùng.
+
+Mỗi lần chạy tạo `results/week4/run-<UTC>/` riêng. Khi kết thúc, terminal in
+`Finished WEEK 4`, đường dẫn kết quả và bảng trung bình/độ lệch chuẩn. Đầu ra:
+
+| File/thư mục | Ý nghĩa |
+| --- | --- |
+| `per_seed.csv` | 10 dòng: 2 phương pháp × 5 seeds; chi phí, FN/FP, recall, tỷ lệ phê duyệt, runtime và tham số tốt nhất |
+| `aggregate.csv` | Mean và **sample SD (ddof=1)** qua các seed; số seed khả thi và số quan sát dùng cho từng chỉ số |
+| `paired_differences.csv` | TPE trừ Random Search trong từng seed; số âm nghĩa là TPE có chi phí thấp hơn |
+| `convergence.csv` | Chi phí tốt nhất theo số trial và số seed đã có nghiệm khả thi |
+| `sensitivity.csv` | 5 kịch bản × 4 phương án; chỉ dùng seed 42 cho tìm kiếm |
+| `main/`, `sensitivity/` | Log CSV/JSON của mỗi tìm kiếm, nghiệm tốt nhất và OOF tương ứng |
+| `figures/seed_stability_runtime.png` | Phân bố kết quả giữa seeds và thời gian chạy |
+| `figures/convergence_across_seeds.png` | Trung bình ± SD và tỷ lệ seed đã tìm thấy nghiệm khả thi |
+| `figures/sensitivity.png` | Biến động chi phí khả thi theo chi phí FN/trần từ chối |
+| `summary.json`, `run_metadata.json` | Số liệu tổng hợp, config kịch bản, tham chiếu/hash lần chạy tái sử dụng, trạng thái và hash đầu ra |
+| `review.md` | Ghi chú kết quả tự sinh trong thư mục log, để hỗ trợ cập nhật README |
+
+**Nguyên tắc đọc kết quả:**
+
+- Giữ đủ cả 5 seeds. Nếu seed không tìm được nghiệm khả thi, ghi rõ thất bại và
+  để trống chi phí; không thay bằng objective có phạt, 0 hoặc một cấu hình vi phạm.
+  Mean/SD chi phí chỉ tính trên seed khả thi và luôn đi kèm số seed thành công.
+- Biểu đồ hội tụ chỉ vẽ mean/SD khi cả 5 seeds đã có nghiệm khả thi, đồng thời
+  vẽ tỷ lệ seed thành công. Dải SD mô tả dao động, không phải khoảng tin cậy.
+- Các seeds đo ngẫu nhiên của quá trình tìm kiếm trên cùng split/CV, không đo
+  đầy đủ bất định do dữ liệu. Không kết luận ý nghĩa thống kê từ 5 seeds đơn thuần.
+- Runtime gồm ghi log; seed 42 được chạy trước đó nên khác tải máy có thể ảnh hưởng.
+  Không đồng nhất search runtime với inference latency. Nên dùng cùng máy và môi trường.
+- Trong độ nhạy, so sánh các phương pháp **trong cùng kịch bản**; tăng chi phí FN
+  làm đổi thang đo mục tiêu. Chưa kiểm tra độ ổn định nhiều seeds cho độ nhạy.
+- Tập test 200 mẫu vẫn được giữ cho tuần 5. Chưa tự động chốt mô hình cuối hoặc
+  tuyên bố tìm được nghiệm tối ưu toàn cục/Pareto front.
+
+### Tiếp tục chạy với checkpoint (các lần chạy mới)
+
+Từ phiên bản này, tuần 4 lưu trạng thái Optuna Study, sampler/RNG, cấu hình trial
+đang chờ và nghiệm tốt nhất trước/sau mỗi trial. Khi bị ngắt, dùng đúng thư mục
+lần chạy đó:
+
+```powershell
+.\.venv\Scripts\python.exe -m src.week4 --resume "results/week4/run-THAY_BANG_THOI_GIAN_THUC_TE"
+```
+
+Trial hoàn thành không được tính/chạy lại; trial đang dở được đánh giá lại với
+đúng cấu hình. Tìm kiếm đã đủ 50 trials chỉ xuất lại log từ checkpoint. Code kiểm
+tra dữ liệu, config, môi trường và phiên bản code trước khi tiếp tục. Chỉ mở một
+process cho mỗi thư mục chạy.
+
+`search.checkpoint.json` là file nội bộ trên máy chứa trạng thái Python đã mã hóa;
+chỉ dùng file do chính chương trình tạo, không tải và mở checkpoint từ nguồn lạ.
+File này bị Git bỏ qua; các log CSV/JSON và OOF vẫn được commit. Thời gian khi resume
+không bao gồm thời gian máy dừng, và có thể thiếu phần tính toán trước lần lưu cuối;
+không dùng để khẳng định thuật toán nhanh hơn khi so với một lần chạy liền mạch.
+
+Lần chạy hoàn chỉnh `run-20261108T055756731500Z` có trước tính năng checkpoint:
+**không cần chạy lại**, và không thể tạo hồi tố trạng thái sampler cho lần đó.
+Code đã vượt qua 22 kiểm tra, trong đó có ngắt/resume sau giai đoạn khởi tạo TPE
+và so sánh toàn bộ lịch sử tham số với chạy liền mạch trên dữ liệu giả.
+
+### Nếu Windows/OneDrive báo lỗi ghi log
+
+JSON/CSV tìm kiếm và metadata tuần 4 được ghi vào file tạm cùng thư mục rồi
+thay thế file đích, thử lại tối đa 6 lần khi gặp lỗi truy cập tạm thời (kể cả
+`OSError: [Errno 22] Invalid argument`). Nếu thay thế thất bại, file log hoàn
+chỉnh trước đó được giữ lại. Lỗi kéo dài vẫn được báo, không tự bỏ qua log.
+
+Bản sửa chỉ đổi cách ghi file. Seed 42 tuần 3 được chấp nhận qua cặp hash
+`optimize.py` cũ/mới đã đối chiếu; code tính objective và sampler vẫn giữ nguyên.
+Các kiểm tra config, dữ liệu, môi trường và file kết quả vẫn được áp dụng.
+
+Nếu lần chạy mới bị ngắt, giữ thư mục đó và dùng `--resume` như trên. Nếu lỗi ghi file tiếp tục,
+có thể tạm dừng đồng bộ OneDrive trong lúc chạy, sau đó bật lại để đồng bộ.
+
 ## 7. Repository structure
 
 ```text
@@ -308,7 +447,9 @@ credit-risk-cost-sensitive-optimization/
 │   ├── preprocessing.py         # Transformer dùng trong pipeline CV
 │   ├── baseline.py              # Hai baseline tuần 2
 │   ├── objective.py             # Đánh giá cấu hình bằng pooled OOF và penalty
-│   └── optimize.py              # Random Search / TPE, log và đồ thị
+│   ├── optimize.py              # Random Search / TPE, log và đồ thị
+│   ├── week4.py                 # Tái sử dụng seed 42, bổ sung seeds và sensitivity
+│   └── week4_analysis.py        # Thống kê, so sánh cặp seed và biểu đồ
 ├── data/
 │   ├── README.md
 │   ├── credit_train.csv         # 800 mẫu với đặc trưng chưa mã hóa
@@ -317,9 +458,10 @@ credit-risk-cost-sensitive-optimization/
 │   ├── cv_folds.json            # Năm folds đã lưu từ lần chạy v2
 │   └── german_credit_data.csv   # File cũ, không dùng trong thực nghiệm
 ├── notebooks/
-├── results/                    # Baseline và week3/run-<UTC>/
+├── results/                    # Baseline, week3/run-<UTC>/, week4/run-<UTC>/
 ├── tests/
-│   └── test_optimization.py     # Kiểm tra bằng dữ liệu giả, không chạy thí nghiệm chính
+│   ├── test_optimization.py     # Kiểm tra bằng dữ liệu giả
+│   └── test_week4.py            # Kiểm tra thống kê, reuse, sensitivity và xuất file
 ├── figures/
 └── report/
     └── week1_formulation.md     # Ghi chú mô hình hóa trong repo
@@ -341,25 +483,27 @@ credit-risk-cost-sensitive-optimization/
   bổ sung log và diễn giải kết quả. Sinh viên đã chạy lại phiên bản chỉnh sửa và tạo kết quả OOF cùng metadata.
   AI hỗ trợ cài đặt objective, Random Search/TPE và kiểm tra code tuần 3 bằng
   dữ liệu giả. Sinh viên đã chạy Random Search/TPE với seed 42; chưa đánh giá test.
+  AI hỗ trợ triển khai tuần 4, kiểm tra dữ liệu giả và bổ sung checkpoint. Sinh viên
+  đã chạy thực nghiệm tuần 4; AI kiểm tra kết quả và cập nhật diễn giải. Các kiểm tra giả không được dùng làm kết quả môn học.
   Sinh viên chịu trách nhiệm hiểu và giải thích từng bước của dự án.
 
 ## 9. Commit and push after running
 
-Sau khi thực nghiệm tuần 3 chạy đủ 50 trials cho mỗi phương pháp, mở
-`comparison.csv`, kiểm tra trạng thái và cập nhật checkpoint/lộ trình ở trên.
-Không ghi “hoàn thành thực nghiệm” khi mới chỉ chạy các kiểm tra code.
+Sau khi tuần 4 chạy thành công, kiểm tra `run_metadata.json` có `status: complete`,
+đủ 10 dòng `per_seed.csv`, bảng tổng hợp và 3 hình. Cập nhật phần Key Results và
+checkpoint từ số liệu thực tế; không ghi hoàn tất chỉ từ kết quả kiểm tra code.
 
-Trong Terminal VS Code, thay đường dẫn mẫu bằng thư mục chạy thực tế được in:
+Thay đường dẫn mẫu bằng thư mục chạy thực tế được in trong terminal:
 
 ```powershell
 git status --short
 git diff --check
-git add README.md src/objective.py src/optimize.py tests/test_optimization.py
-git add "results/week3/run-THAY_BANG_THOI_GIAN_THUC_TE"
+git add README.md .gitignore src/week4.py src/week4_analysis.py src/optimize.py src/artifacts.py src/resumable_search.py tests/test_week4.py tests/test_artifacts.py tests/test_resume.py
+git add "results/week4/run-20261108T055756731500Z"
 git diff --cached --stat
-git commit -m "feat(week3): compare random search and TPE on constrained OOF cost"
+git commit -m "feat(week4): analyze search stability and cost sensitivity"
 git push origin main
 ```
 
-Nếu có các lần chạy bị ngắt hoặc thử ngân sách nhỏ, giữ nguyên log và trạng thái
-để truy vết, phân biệt rõ với lần chạy đủ ngân sách. Không dùng force-push.
+Giữ file dữ liệu và các kết quả tuần 1–3 đã commit. Không cần đưa tài liệu học
+của giảng viên vào commit thực nghiệm. Không dùng force-push.

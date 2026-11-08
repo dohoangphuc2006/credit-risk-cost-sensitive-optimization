@@ -8,6 +8,7 @@ venv/
 dist/
 build/
 .cache/
+search.checkpoint.json
 .env
 .env.*
 !.env.example

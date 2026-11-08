@@ -19,7 +19,8 @@ import pandas as pd
 
 from .config import CONFIG_PATH, DATA_DIR, PROJECT_ROOT, load_config
 from .data_utils import (_environment_versions, file_sha256, load_cv_splits,
-                         load_training_data, write_json)
+                         load_training_data)
+from .artifacts import write_csv, write_json
 from .objective import candidate_key, evaluate_candidate, suggest_params
 
 
@@ -73,16 +74,16 @@ def run_search(method, seed, n_trials, X, y, splits, config, output_dir):
                   "trial_number": trial.number, "params": params, **result}
         if result["feasible"] and (best is None or candidate_key(record) < candidate_key(best)):
             best = record
-            pd.DataFrame({"source_row_id": X.index, "target": y.to_numpy(),
+            write_csv(output_dir / "best_oof.csv", pd.DataFrame({"source_row_id": X.index, "target": y.to_numpy(),
                           "fold": fold_ids, "probability_bad": oof,
                           "prediction": (oof >= params["threshold"]).astype(int)
-                          }).to_csv(output_dir / "best_oof.csv", index=False)
+                          }))
             write_json(output_dir / "best_feasible.json", best)
         return result["objective"]
 
     def save_history(study, trial=None):
         rows = [{"method": method, "sampler_seed": seed, **row} for row in history_rows(study)]
-        pd.DataFrame(rows).to_csv(output_dir / "trials.csv", index=False)
+        write_csv(output_dir / "trials.csv", pd.DataFrame(rows))
         write_json(output_dir / "trials.json", {"trials": [
             {**row, "fold_details": t.user_attrs.get("fold_details")}
             for row, t in zip(rows, study.trials)]})
@@ -214,7 +215,7 @@ def main(argv=None):
                                "feasible_trials": summary["feasible_trials"],
                                "completed_fit_count": summary["completed_fit_count"],
                                "search_seconds": summary["elapsed_seconds"]})
-        pd.DataFrame(comparison).to_csv(output / "comparison.csv", index=False)
+        write_csv(output / "comparison.csv", pd.DataFrame(comparison))
         write_json(output / "summary.json", {"runs": summaries, "comparison": comparison})
         plot_progress(histories, baselines, output / "best_feasible_cost.png")
         print(pd.DataFrame(comparison).reindex(columns=[

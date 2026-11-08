@@ -1,0 +1,6 @@
+sampler_seed,both_feasible,tpe_minus_random_cost,lower_cost_method
+42,True,0.008750000000000036,random
+100,True,-0.061249999999999916,tpe
+2024,True,-0.04625000000000001,tpe
+2025,True,-0.06500000000000006,tpe
+2026,True,-0.08125000000000004,tpe
