@@ -1,0 +1,96 @@
+{
+  "method": "tpe",
+  "sampler_seed": 2024,
+  "trial_number": 36,
+  "params": {
+    "threshold": 0.6761939375932341,
+    "n_estimators": 32,
+    "max_depth": 8,
+    "min_samples_split": 14,
+    "bad_class_weight": 5.0537488737729035
+  },
+  "metrics": {
+    "n_samples": 800,
+    "TN": 441,
+    "FP": 119,
+    "FN": 87,
+    "TP": 153,
+    "total_cost": 554.0,
+    "cost_per_sample": 0.6925,
+    "rejection_rate": 0.34,
+    "approval_rate": 0.6599999999999999,
+    "accuracy": 0.7425,
+    "precision_bad": 0.5625,
+    "recall_bad": 0.6375,
+    "f1_bad": 0.59765625,
+    "f1_macro": 0.7041590073529411
+  },
+  "constraint_g": -0.009999999999999953,
+  "constraint_violation": 0.0,
+  "feasible": true,
+  "objective": 0.6925,
+  "fold_details": [
+    {
+      "fold": 0,
+      "n_samples": 160,
+      "TN": 91,
+      "FP": 21,
+      "FN": 15,
+      "TP": 33,
+      "total_cost": 96.0,
+      "cost_per_sample": 0.6,
+      "rejection_rate": 0.3375,
+      "approval_rate": 0.6625
+    },
+    {
+      "fold": 1,
+      "n_samples": 160,
+      "TN": 92,
+      "FP": 20,
+      "FN": 16,
+      "TP": 32,
+      "total_cost": 100.0,
+      "cost_per_sample": 0.625,
+      "rejection_rate": 0.325,
+      "approval_rate": 0.675
+    },
+    {
+      "fold": 2,
+      "n_samples": 160,
+      "TN": 82,
+      "FP": 30,
+      "FN": 16,
+      "TP": 32,
+      "total_cost": 110.0,
+      "cost_per_sample": 0.6875,
+      "rejection_rate": 0.3875,
+      "approval_rate": 0.6125
+    },
+    {
+      "fold": 3,
+      "n_samples": 160,
+      "TN": 88,
+      "FP": 24,
+      "FN": 23,
+      "TP": 25,
+      "total_cost": 139.0,
+      "cost_per_sample": 0.86875,
+      "rejection_rate": 0.30625,
+      "approval_rate": 0.69375
+    },
+    {
+      "fold": 4,
+      "n_samples": 160,
+      "TN": 88,
+      "FP": 24,
+      "FN": 17,
+      "TP": 31,
+      "total_cost": 109.0,
+      "cost_per_sample": 0.68125,
+      "rejection_rate": 0.34375,
+      "approval_rate": 0.65625
+    }
+  ],
+  "fit_count": 5,
+  "evaluation_seconds": 0.20566939999980605
+}

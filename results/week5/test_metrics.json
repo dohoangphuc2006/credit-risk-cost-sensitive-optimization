@@ -1,0 +1,34 @@
+{
+  "evaluation_scope": "Independent held-out test after frozen train-CV selection and refit",
+  "method": "tpe",
+  "sampler_seed": 100,
+  "trial_number": 47,
+  "threshold": 0.5454772140992292,
+  "selection_sha256": "fd7ef1d74d8f67a0eda2a45b9945f5d6f2f12a29fc593708b8e58188359aae9c",
+  "model_sha256": "db1a16f57d3f19a7c66508a92aa6a068fbb59205c7171018d0683d77c92ecc38",
+  "cost": {
+    "false_negative": 5.0,
+    "false_positive": 1.0
+  },
+  "max_rejection_rate": 0.35,
+  "metrics": {
+    "n_samples": 200,
+    "TN": 106,
+    "FP": 34,
+    "FN": 20,
+    "TP": 40,
+    "total_cost": 134.0,
+    "cost_per_sample": 0.67,
+    "rejection_rate": 0.37,
+    "approval_rate": 0.63,
+    "accuracy": 0.73,
+    "precision_bad": 0.5405405405405406,
+    "recall_bad": 0.6666666666666666,
+    "f1_bad": 0.5970149253731343,
+    "f1_macro": 0.6970037032880709,
+    "constraint_g": 0.020000000000000018,
+    "constraint_violation": 0.020000000000000018,
+    "feasible": false
+  },
+  "interpretation": "Test is descriptive validation of the frozen model. OOF was used for selection; its score is optimistic. No baseline was evaluated on test, so no test improvement over baseline is claimed."
+}

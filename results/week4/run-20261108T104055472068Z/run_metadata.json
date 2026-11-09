@@ -1,0 +1,634 @@
+{
+  "status": "complete",
+  "created_at_utc": "2026-11-08T10:40:55.473068+00:00",
+  "config": {
+    "dataset": {
+      "openml_id": 31,
+      "name": "credit-g",
+      "expected_samples": 1000,
+      "expected_features": 20
+    },
+    "split": {
+      "test_size": 0.2,
+      "seed": 42
+    },
+    "cv": {
+      "n_splits": 5,
+      "shuffle": true,
+      "seed": 42
+    },
+    "model_seed": 42,
+    "optimization": {
+      "trials_per_seed": 50,
+      "sampler_seeds": [
+        42,
+        100,
+        2024,
+        2025,
+        2026
+      ],
+      "search_space": {
+        "threshold": {
+          "type": "float",
+          "low": 0.1,
+          "high": 0.9
+        },
+        "n_estimators": {
+          "type": "int",
+          "low": 20,
+          "high": 200
+        },
+        "max_depth": {
+          "type": "int",
+          "low": 2,
+          "high": 15
+        },
+        "min_samples_split": {
+          "type": "int",
+          "low": 2,
+          "high": 20
+        },
+        "bad_class_weight": {
+          "type": "float",
+          "low": 1.0,
+          "high": 10.0
+        }
+      }
+    },
+    "cost": {
+      "false_negative": 5.0,
+      "false_positive": 1.0
+    },
+    "policy": {
+      "max_rejection_rate": 0.35,
+      "constraint_scope": "pooled_train_oof",
+      "penalty_multiplier": 10.0
+    },
+    "sensitivity": {
+      "planned_max_rejection_rates": [
+        0.25,
+        0.35,
+        0.45
+      ],
+      "planned_false_negative_costs": [
+        2.0,
+        5.0,
+        10.0
+      ]
+    }
+  },
+  "config_sha256": "e906d974ddd2ab383c526104b7580634802a838655cdd921a1112d6a3a3f4207",
+  "environment": {
+    "python": "3.12.10",
+    "packages": {
+      "numpy": "2.5.4",
+      "pandas": "3.1.0",
+      "scikit-learn": "1.9.1",
+      "optuna": "5.0.0",
+      "matplotlib": "3.11.2"
+    }
+  },
+  "sampler_seeds": [
+    42,
+    100,
+    2024,
+    2025,
+    2026
+  ],
+  "scenario_configs": {
+    "main": {
+      "dataset": {
+        "openml_id": 31,
+        "name": "credit-g",
+        "expected_samples": 1000,
+        "expected_features": 20
+      },
+      "split": {
+        "test_size": 0.2,
+        "seed": 42
+      },
+      "cv": {
+        "n_splits": 5,
+        "shuffle": true,
+        "seed": 42
+      },
+      "model_seed": 42,
+      "optimization": {
+        "trials_per_seed": 50,
+        "sampler_seeds": [
+          42,
+          100,
+          2024,
+          2025,
+          2026
+        ],
+        "search_space": {
+          "threshold": {
+            "type": "float",
+            "low": 0.1,
+            "high": 0.9
+          },
+          "n_estimators": {
+            "type": "int",
+            "low": 20,
+            "high": 200
+          },
+          "max_depth": {
+            "type": "int",
+            "low": 2,
+            "high": 15
+          },
+          "min_samples_split": {
+            "type": "int",
+            "low": 2,
+            "high": 20
+          },
+          "bad_class_weight": {
+            "type": "float",
+            "low": 1.0,
+            "high": 10.0
+          }
+        }
+      },
+      "cost": {
+        "false_negative": 5.0,
+        "false_positive": 1.0
+      },
+      "policy": {
+        "max_rejection_rate": 0.35,
+        "constraint_scope": "pooled_train_oof",
+        "penalty_multiplier": 10.0
+      },
+      "sensitivity": {
+        "planned_max_rejection_rates": [
+          0.25,
+          0.35,
+          0.45
+        ],
+        "planned_false_negative_costs": [
+          2.0,
+          5.0,
+          10.0
+        ]
+      }
+    },
+    "fn2": {
+      "dataset": {
+        "openml_id": 31,
+        "name": "credit-g",
+        "expected_samples": 1000,
+        "expected_features": 20
+      },
+      "split": {
+        "test_size": 0.2,
+        "seed": 42
+      },
+      "cv": {
+        "n_splits": 5,
+        "shuffle": true,
+        "seed": 42
+      },
+      "model_seed": 42,
+      "optimization": {
+        "trials_per_seed": 50,
+        "sampler_seeds": [
+          42,
+          100,
+          2024,
+          2025,
+          2026
+        ],
+        "search_space": {
+          "threshold": {
+            "type": "float",
+            "low": 0.1,
+            "high": 0.9
+          },
+          "n_estimators": {
+            "type": "int",
+            "low": 20,
+            "high": 200
+          },
+          "max_depth": {
+            "type": "int",
+            "low": 2,
+            "high": 15
+          },
+          "min_samples_split": {
+            "type": "int",
+            "low": 2,
+            "high": 20
+          },
+          "bad_class_weight": {
+            "type": "float",
+            "low": 1.0,
+            "high": 10.0
+          }
+        }
+      },
+      "cost": {
+        "false_negative": 2.0,
+        "false_positive": 1.0
+      },
+      "policy": {
+        "max_rejection_rate": 0.35,
+        "constraint_scope": "pooled_train_oof",
+        "penalty_multiplier": 10.0
+      },
+      "sensitivity": {
+        "planned_max_rejection_rates": [
+          0.25,
+          0.35,
+          0.45
+        ],
+        "planned_false_negative_costs": [
+          2.0,
+          5.0,
+          10.0
+        ]
+      }
+    },
+    "fn10": {
+      "dataset": {
+        "openml_id": 31,
+        "name": "credit-g",
+        "expected_samples": 1000,
+        "expected_features": 20
+      },
+      "split": {
+        "test_size": 0.2,
+        "seed": 42
+      },
+      "cv": {
+        "n_splits": 5,
+        "shuffle": true,
+        "seed": 42
+      },
+      "model_seed": 42,
+      "optimization": {
+        "trials_per_seed": 50,
+        "sampler_seeds": [
+          42,
+          100,
+          2024,
+          2025,
+          2026
+        ],
+        "search_space": {
+          "threshold": {
+            "type": "float",
+            "low": 0.1,
+            "high": 0.9
+          },
+          "n_estimators": {
+            "type": "int",
+            "low": 20,
+            "high": 200
+          },
+          "max_depth": {
+            "type": "int",
+            "low": 2,
+            "high": 15
+          },
+          "min_samples_split": {
+            "type": "int",
+            "low": 2,
+            "high": 20
+          },
+          "bad_class_weight": {
+            "type": "float",
+            "low": 1.0,
+            "high": 10.0
+          }
+        }
+      },
+      "cost": {
+        "false_negative": 10.0,
+        "false_positive": 1.0
+      },
+      "policy": {
+        "max_rejection_rate": 0.35,
+        "constraint_scope": "pooled_train_oof",
+        "penalty_multiplier": 10.0
+      },
+      "sensitivity": {
+        "planned_max_rejection_rates": [
+          0.25,
+          0.35,
+          0.45
+        ],
+        "planned_false_negative_costs": [
+          2.0,
+          5.0,
+          10.0
+        ]
+      }
+    },
+    "rejection25": {
+      "dataset": {
+        "openml_id": 31,
+        "name": "credit-g",
+        "expected_samples": 1000,
+        "expected_features": 20
+      },
+      "split": {
+        "test_size": 0.2,
+        "seed": 42
+      },
+      "cv": {
+        "n_splits": 5,
+        "shuffle": true,
+        "seed": 42
+      },
+      "model_seed": 42,
+      "optimization": {
+        "trials_per_seed": 50,
+        "sampler_seeds": [
+          42,
+          100,
+          2024,
+          2025,
+          2026
+        ],
+        "search_space": {
+          "threshold": {
+            "type": "float",
+            "low": 0.1,
+            "high": 0.9
+          },
+          "n_estimators": {
+            "type": "int",
+            "low": 20,
+            "high": 200
+          },
+          "max_depth": {
+            "type": "int",
+            "low": 2,
+            "high": 15
+          },
+          "min_samples_split": {
+            "type": "int",
+            "low": 2,
+            "high": 20
+          },
+          "bad_class_weight": {
+            "type": "float",
+            "low": 1.0,
+            "high": 10.0
+          }
+        }
+      },
+      "cost": {
+        "false_negative": 5.0,
+        "false_positive": 1.0
+      },
+      "policy": {
+        "max_rejection_rate": 0.25,
+        "constraint_scope": "pooled_train_oof",
+        "penalty_multiplier": 10.0
+      },
+      "sensitivity": {
+        "planned_max_rejection_rates": [
+          0.25,
+          0.35,
+          0.45
+        ],
+        "planned_false_negative_costs": [
+          2.0,
+          5.0,
+          10.0
+        ]
+      }
+    },
+    "rejection45": {
+      "dataset": {
+        "openml_id": 31,
+        "name": "credit-g",
+        "expected_samples": 1000,
+        "expected_features": 20
+      },
+      "split": {
+        "test_size": 0.2,
+        "seed": 42
+      },
+      "cv": {
+        "n_splits": 5,
+        "shuffle": true,
+        "seed": 42
+      },
+      "model_seed": 42,
+      "optimization": {
+        "trials_per_seed": 50,
+        "sampler_seeds": [
+          42,
+          100,
+          2024,
+          2025,
+          2026
+        ],
+        "search_space": {
+          "threshold": {
+            "type": "float",
+            "low": 0.1,
+            "high": 0.9
+          },
+          "n_estimators": {
+            "type": "int",
+            "low": 20,
+            "high": 200
+          },
+          "max_depth": {
+            "type": "int",
+            "low": 2,
+            "high": 15
+          },
+          "min_samples_split": {
+            "type": "int",
+            "low": 2,
+            "high": 20
+          },
+          "bad_class_weight": {
+            "type": "float",
+            "low": 1.0,
+            "high": 10.0
+          }
+        }
+      },
+      "cost": {
+        "false_negative": 5.0,
+        "false_positive": 1.0
+      },
+      "policy": {
+        "max_rejection_rate": 0.45,
+        "constraint_scope": "pooled_train_oof",
+        "penalty_multiplier": 10.0
+      },
+      "sensitivity": {
+        "planned_max_rejection_rates": [
+          0.25,
+          0.35,
+          0.45
+        ],
+        "planned_false_negative_costs": [
+          2.0,
+          5.0,
+          10.0
+        ]
+      }
+    }
+  },
+  "sensitivity_seed": 42,
+  "trials_per_method_per_seed": 50,
+  "reuse_path": "results/week3/run-20261108T052245407488Z",
+  "reuse_metadata_sha256": "7266a65b2b40bab59bb8d3a0366d104f6e8fe1bb8565907de5adea0095369681",
+  "reuse_compatibility_note": "Reviewed optimize.py log-I/O fix accepted by exact old/new SHA-256 pair; all other recorded code must match.",
+  "reuse_output_sha256": {
+    "best_feasible_cost.png": "8344c82a569f5430735df55d5ce1aa3a42f764672c1bfb6a02108a61dab73a1f",
+    "comparison.csv": "4ab3b320742e7bac7c2311d857c93a8421965c198edc40f3dc2194e6fd68068d",
+    "summary.json": "cc007cb76158d95cc75423d14f8237f9d2339a97aba400e4d049a110e7c56403",
+    "random_seed42/best_feasible.json": "c5ce9c2a786d7d87d36f500fa138c6ec6f074c332997f444cc939aab593e90cf",
+    "random_seed42/best_oof.csv": "7356861992d8d88f6151206ce9493ae689f45572f0b9e4a9a745f628aca51bae",
+    "random_seed42/summary.json": "611979d5f49944b980a79b2c4ad011e82505f19546bcc5263a83a0566887190b",
+    "random_seed42/trials.csv": "b75618642bc6d83d9fc07ea0930f6969efbf09a97ae8d9c363c6cfd89a8e4475",
+    "random_seed42/trials.json": "d8f6fabdd8f9174221be7a98b39112f5f0a9409739425dc1d9f8221c06d85fea",
+    "tpe_seed42/best_feasible.json": "51ed081abb8177cc78b5d755b47d24ecaaf633f5da546ba0f7474a856e82bbd5",
+    "tpe_seed42/best_oof.csv": "bb94ead87326f1ead9524146c7b53e82747f2513d6e205009329f5fe6b49b1ef",
+    "tpe_seed42/summary.json": "8bc3d73f2048b9ff3759f4b6838874f5fbd27db36fc03ecd5a8f814fbd195531",
+    "tpe_seed42/trials.csv": "4ddbf4eaacad5e2016d53fa5cf67879fe55295f56a01e64664cd29f6e6578a67",
+    "tpe_seed42/trials.json": "3c9a7eaa7ddc1ea50bc7e483a41c0d1175d818cce1c940f5040d2eb4a698bed9"
+  },
+  "new_expected_fit_count": 4000,
+  "reused_fit_count": 500,
+  "code_sha256": {
+    "artifacts.py": "98e72df2811d5f1d6661867525d8fd1439f34fc93ad25f960d167e8c416426a2",
+    "baseline.py": "7807f35bc8486a6be29c5a2a09ac4fa99a3b7492a430bac7541231468bcf4e0d",
+    "config.py": "78e0acd5e534eb490a4752321760eb250c2d57ab9ea84731d8eeb4b8dd269bc1",
+    "data_utils.py": "be7da2171ce686a2fcba0b138c1e58319299485ff1783dccb4b32f0644cbf3aa",
+    "objective.py": "ec41554979b2e86686bab08946105fd23bb0beb4d28d2a8b5f0ac85dfc31aeb9",
+    "optimize.py": "a0ae590d87898f4cd20013fe3dc0d2d30aba27a581ee3080a061247f7a21e3f7",
+    "preprocessing.py": "f6063906e336f6987ca493a0d783da1065c3802f43966b68cb8ed8052f34a8d1",
+    "resumable_search.py": "4d2cdd308d0749ed4e40cb49b80e4f53a892f692cb6a259430ce46f5459b8926",
+    "week4.py": "df18b639e7e5ff60b0327af76ebb8d8eae2bb8cbb2319f8e5cc5b5e246820caa",
+    "week4_analysis.py": "559ac195f8ca80ef8bd6c53758e92d3586d44c673239fee9e7d1f036bfdc3e80",
+    "__init__.py": "8adf5201ca3d4e92a9b73261971fb75fe28bf8a49f1d9ab9247b524df49a8ccd"
+  },
+  "input_sha256": {
+    "credit_train.csv": "8281704fe68e1ce1747342a0125560399f09e2ce8d9f88dec24c3f4dbf5d97bc",
+    "cv_folds.json": "d78957043cee5a641883146569c445b12f3353b7c419f500ffdfe26fee112a25",
+    "dataset_metadata.json": "8b37670eec450319d0545c5bf57bc2dcb9e29e1965ea82fe5b1c5fb38bb7596b"
+  },
+  "baseline_oof_sha256": "999d527801a89030624b5244ffb81391af29c368bf6341c8a13495bdce607260",
+  "scope": "train OOF only; 5 sampler seeds for main protocol; sensitivity rerun seed 42 only",
+  "completed_searches": [
+    "main/random_seed100",
+    "main/tpe_seed100",
+    "main/random_seed2024",
+    "main/tpe_seed2024",
+    "main/random_seed2025",
+    "main/tpe_seed2025",
+    "main/random_seed2026",
+    "main/tpe_seed2026",
+    "sensitivity/fn2/random_seed42",
+    "sensitivity/fn2/tpe_seed42",
+    "sensitivity/fn10/random_seed42",
+    "sensitivity/fn10/tpe_seed42",
+    "sensitivity/rejection25/random_seed42",
+    "sensitivity/rejection25/tpe_seed42",
+    "sensitivity/rejection45/random_seed42",
+    "sensitivity/rejection45/tpe_seed42"
+  ],
+  "checkpoint_version": 1,
+  "elapsed_seconds": 488.94522510000024,
+  "output_sha256": {
+    "aggregate.csv": "bfff7d9779e1ff2fdaa6fcf6da02bba40e1aef85e0a1ae95e28e7599d6572358",
+    "convergence.csv": "a118f8c0b2ca2a5c754610a0d36448a5a1e8ddae284929db924b25e00922598e",
+    "paired_differences.csv": "af3a1cc0bb2c27450ab3d7c2a3f446b211f2599d903a73758f1eee07d21d444f",
+    "per_seed.csv": "286a6238887ac689746a4815c5cf2c3bb76c78911522896f89b813fcaf37b8c1",
+    "review.md": "0ec09b0abebc4b0722090279dc6eef6372dc2d89af2bd5fc28a1ad2079b5a251",
+    "sensitivity.csv": "68176cd53c8242ccb0927a79bc12c465452eee07ed5df4c42114a6404525bc2c",
+    "summary.json": "2972c1eaeba031221876ad1f9502e02d97376811dc45d5f84a5f69539e416f72",
+    "figures/convergence_across_seeds.png": "2c34f21250a977bc9991826ef818f3b69c048d2e25805e855d615171ea222ff2",
+    "figures/seed_stability_runtime.png": "3e85bdb435ab85b2242454aff60915c4f1e32ac106c1f223bd5f5042ed3b6c61",
+    "figures/sensitivity.png": "c980af450a96af4bb11897a8f1bb832681494ddf0827f82ffbdab3a63873092b",
+    "main/random_seed100/best_feasible.json": "c2fd8d730086331a8ebead510b51e648635305b0e5b41641eef348f342d1d1bb",
+    "main/random_seed100/best_oof.csv": "8e2521d5c6efedb37af54d9b73fa8ea927e8ae454f245f2744b22435c6311268",
+    "main/random_seed100/summary.json": "ce035e3c5d52875685390bdcd1c5da47fa80d7a5a3f478647373bfa92eeea472",
+    "main/random_seed100/trials.csv": "59c055978b41b4dd0d67ed2264ec0b0d995493e77a4399594bf8d4350b9a372f",
+    "main/random_seed100/trials.json": "22b62b6f3f946e3301bbda5443a4ff25c89298828f6e2a8942e0bad76bcf864e",
+    "main/random_seed2024/best_feasible.json": "fffc81f7f250486b0394f15c15c1849a24d80c29ece687dee1127b0a7a1b07b5",
+    "main/random_seed2024/best_oof.csv": "4c2318a8a98520df4b1f10adbe4dcc29d1daba4359862d47e95deae96d5244ba",
+    "main/random_seed2024/summary.json": "d1b39781ca37d472cb2d9c178cfdf3bf8ebc0c1720ac1b7f41f5ceb02bf91d55",
+    "main/random_seed2024/trials.csv": "a85bb9501a1007f83757e9719d68ac546308a9a8ca2aeb36fd5ad221fc3a235e",
+    "main/random_seed2024/trials.json": "f103a45c3ca03fca35dbfde93addf14abee2009955a4da7fa2ecb12727a03c37",
+    "main/random_seed2025/best_feasible.json": "3aa26c1ea4f87dc25c83c191c7240fc2b058962a718bc279e933a087a69a9556",
+    "main/random_seed2025/best_oof.csv": "62cee7a0cd572f69242782b42c2031db43de9842a405d9e770411e6ce4681274",
+    "main/random_seed2025/summary.json": "e46d99fd7f2560b2b7270120e99aaca6316daa8f6627ee1809e45e7ae3204de8",
+    "main/random_seed2025/trials.csv": "fee23e353e8f19d56114ce4745d0b361be994972385821eaa46da3dc1d5aee65",
+    "main/random_seed2025/trials.json": "c19ed4567a8aea349087b4fa5fc37bfd0d0a2f0ae47dadab5bb91e794b16e73c",
+    "main/random_seed2026/best_feasible.json": "5ece932319353a49a8d346cbfdc747e24b8fd916ee12af3d507fd5c937ff132f",
+    "main/random_seed2026/best_oof.csv": "b0e58268fc07d607f3d2ae29e90f843236745614d3072d9e66bb069ec1da8b94",
+    "main/random_seed2026/summary.json": "047ef8ebe4da6c49a141c038a490b54109050ebfc6e9774b5f6efa30e8f8ef25",
+    "main/random_seed2026/trials.csv": "812d82c7e620c498b3043c64e1129d9663118dfede9e49555cddd50120fec912",
+    "main/random_seed2026/trials.json": "e8d413d40ffa8a8d4de7a12a8f8ddafe727c5ec7ca6896d154243ce13a09743e",
+    "main/tpe_seed100/best_feasible.json": "8f8f7f12535ca72675f7ff86a4f7b036912c95b38cb092722a45518d7095ea45",
+    "main/tpe_seed100/best_oof.csv": "fa76e199f0c7e6f7968496e07f129467189700c0d2f7c7d1e956816daa35f390",
+    "main/tpe_seed100/summary.json": "74b21b0868a0183d2e35780732f5f98c4e2eb54718b6aca4b1a6f1fb45b7bd80",
+    "main/tpe_seed100/trials.csv": "69920a953ede64c5a956bb3008fcbd83688b9fe32bdcdadd4c7c90c4808b35fc",
+    "main/tpe_seed100/trials.json": "4556d4b481bde6ab014d3d7142ad834b2916543f1f0db9f589f85026bc648852",
+    "main/tpe_seed2024/best_feasible.json": "aad1bf467241a5dce7b1d87a0b2dc06539fc5180b295a86460fbe8907d3791ba",
+    "main/tpe_seed2024/best_oof.csv": "8e956a99907fe172cb33489566bbd96e213f10ff303d414aa9058ee365887f18",
+    "main/tpe_seed2024/summary.json": "509d275c26e98721863ffc327b20aae067d9540c3061ac3fa8a675f4b1290322",
+    "main/tpe_seed2024/trials.csv": "317c5658126cf74e3e9bf1e0c14c63077f11ad2ad9da2a03a7e5e0348d6fcff5",
+    "main/tpe_seed2024/trials.json": "a49f2c9fea287a3c18eb86215d18f319332972bcf2a46858b08d1f0c2d5ca21a",
+    "main/tpe_seed2025/best_feasible.json": "0bbec51f8b26a6cba718451eeb3ed6a85e39581eeaeeb1e6be888bcc6ade876f",
+    "main/tpe_seed2025/best_oof.csv": "a416c1ca687642c9ca526bed6bd2c0b42455fae139b63e82a869dc9b9ccca977",
+    "main/tpe_seed2025/summary.json": "d6a14a5cb9d64aa2ea2fa7a309e228d64cf704b70e12aaeb68e634e484ee3821",
+    "main/tpe_seed2025/trials.csv": "0751b6070e847ab4e499846bbb294639bad13c50b82980436708037f21ffda6c",
+    "main/tpe_seed2025/trials.json": "0b2c16ee9568ac0f4e1884deaac3833ce9536a8ae2de7dc99773f1893b92109a",
+    "main/tpe_seed2026/best_feasible.json": "808cb92560713a7158cbac44476912e88917b35efab9077ca93b6ca81fcbadd3",
+    "main/tpe_seed2026/best_oof.csv": "ec0274d1184e795630cbc3f293a28b8e999410f28ea201fd8729456cf53be743",
+    "main/tpe_seed2026/summary.json": "2eca3f0ec9fe4e5dfde649a94f43a59b4936baeba4ca1ee9e4e3da5927c7d390",
+    "main/tpe_seed2026/trials.csv": "cbe7e5c2c7780399669b4b19c90401a5633352fa6eea89d19110bf4bd1dc2b2a",
+    "main/tpe_seed2026/trials.json": "cc48f3eb55dd7f5549f1fdd0698a1d797425c982a641eb024936779afff887dd",
+    "sensitivity/fn10/random_seed42/best_feasible.json": "6f1fb914d316460554a56fcc1a41dac0472dc09c462063017694914a8362e9f1",
+    "sensitivity/fn10/random_seed42/best_oof.csv": "c32e0db7107ac1689e40f321f4ece54c330298620fb2394761c376cd83d76fe7",
+    "sensitivity/fn10/random_seed42/summary.json": "23e3924e12413ae6b4d0fc87fd23117beb171f2c991e86b48877c69cbc40ad83",
+    "sensitivity/fn10/random_seed42/trials.csv": "176a676e4467b2786a37c2879e40df92e31f69959c7ca2f21e77a563a97c7066",
+    "sensitivity/fn10/random_seed42/trials.json": "bcd0b3432e6cb79945b333b912e83bdf1a64f76e4f0ff683a435b9783203b088",
+    "sensitivity/fn10/tpe_seed42/best_feasible.json": "e0184e5f95b2f3883cf4fbab3b3fbc6827776dabf3a7c437e2bef5e4f2a7859f",
+    "sensitivity/fn10/tpe_seed42/best_oof.csv": "7e0ad590cf481e09257045795433df983520c8faf0c03087e563158ae7f497ba",
+    "sensitivity/fn10/tpe_seed42/summary.json": "44eb5f4cf971d47bb63a330fa3ea8d44bdf583e4cba282a3d3bbb54969cfa6cc",
+    "sensitivity/fn10/tpe_seed42/trials.csv": "3a8c14b79a1568dab7239ed9f0e26f2ffa94df822b86712bac7e5e13bcbc89dd",
+    "sensitivity/fn10/tpe_seed42/trials.json": "5c48b0227b783c778cf3aaa0188b3b6b91432a7a84162bffb4546f9555d5c8a8",
+    "sensitivity/fn2/random_seed42/best_feasible.json": "9b3af266dc5b6ffa91b7d777dc36d90e5f39a97b2e6158fb87fca03c5b92a772",
+    "sensitivity/fn2/random_seed42/best_oof.csv": "09c3581c39c0db3e05fa0f0f12596bbfd52749476f575fc7af09b7c33384b10f",
+    "sensitivity/fn2/random_seed42/summary.json": "08229b446c7e3dbf4f6b3d242b7baaeca2105106a9efda633800b5a708941f3b",
+    "sensitivity/fn2/random_seed42/trials.csv": "38ffe3379b9185bb8c63a5741e8835f3ab2672b45eb94fcd4e47c9bd4432eda0",
+    "sensitivity/fn2/random_seed42/trials.json": "1dc70a015cd8595abd04a6bf7dec62588eeae42e2b817a450350883498967253",
+    "sensitivity/fn2/tpe_seed42/best_feasible.json": "a18e38151d0f3f17f244eedccce6b78ccc5488c9c6d8449bebfd73e25a25b2bb",
+    "sensitivity/fn2/tpe_seed42/best_oof.csv": "1347276a816b30e83b4693b23a283578e35baa1cd0630638cf1d73330d3b83b1",
+    "sensitivity/fn2/tpe_seed42/summary.json": "4ccea81fa69c7ef5dcc50bc8a2f8e72b2adbd07ef4d3816d610b2d4c0499ac21",
+    "sensitivity/fn2/tpe_seed42/trials.csv": "387683bd722f8fc30021231485e975f5119c52b2dc7f60e2271348ba36e3f2d9",
+    "sensitivity/fn2/tpe_seed42/trials.json": "a1cc400c08c8f09aeb91ee613814fdd31833a409ac1a156e8a8bc3a4b804d11d",
+    "sensitivity/rejection25/random_seed42/best_feasible.json": "0028fa99d727774d5d489ca7e8fbbb6454bcf743310bf95ff100dcfa69642a77",
+    "sensitivity/rejection25/random_seed42/best_oof.csv": "a2d2eccd5cfb365a089e2c1b68f3120692fdc95310c0de40c6fc3adaefc44c71",
+    "sensitivity/rejection25/random_seed42/summary.json": "3fc7b670cbdb690bba64b8db5d50d02153cacd60968eee001e2604f8bb8362f6",
+    "sensitivity/rejection25/random_seed42/trials.csv": "e3d059fa6ae5de8b6477811c2b7d7526ee5a06f89cedd2e2fa06e8b56092c2e9",
+    "sensitivity/rejection25/random_seed42/trials.json": "dc309076e6124f572cfa64037238fab44cb9835c7fcf062753ad3d91a80c4ee1",
+    "sensitivity/rejection25/tpe_seed42/best_feasible.json": "42bd26481c2e7cd916f778e3b8654d72d6c1f4b492ea829a2226f01863aaf3a2",
+    "sensitivity/rejection25/tpe_seed42/best_oof.csv": "48f48ba867123860c1996b29761c90b29c9c67c2518d4ee13808510276e65617",
+    "sensitivity/rejection25/tpe_seed42/summary.json": "5509480de2ac94c8494d8a081108ea82403eef851127d92cea4a654bd356e028",
+    "sensitivity/rejection25/tpe_seed42/trials.csv": "022ada41939f6bc1daac387c5ad6dc0cdf6c39fd770d17e6dfe7de2678394dce",
+    "sensitivity/rejection25/tpe_seed42/trials.json": "6a9d2d1086902e68b603f193835310f8d9d78f29846dde5f2b15f4e1ad8756b3",
+    "sensitivity/rejection45/random_seed42/best_feasible.json": "057339abbe752a21a2fba74c46716ca7fcd22f48d38e4f62fceeaa0b3fe18b7b",
+    "sensitivity/rejection45/random_seed42/best_oof.csv": "41b4b6e7c0c3f60ce8b69ea46479bfe5b1ee24b2e3932c9cfa43585cd3c8857b",
+    "sensitivity/rejection45/random_seed42/summary.json": "0ef4df5eaedeaa2d7accd06f0f41c710fd62f21e961b7662d9f9a7e58838d4a1",
+    "sensitivity/rejection45/random_seed42/trials.csv": "5186623a10342e2af9bf23ee0b65e8a873aa0e1916bdae0b838d2fc85f760081",
+    "sensitivity/rejection45/random_seed42/trials.json": "d9488acc4f6b456d9c2fedc19f0f2e994793164d32a59fbab9db2cd6855d76d0",
+    "sensitivity/rejection45/tpe_seed42/best_feasible.json": "d147276e341b92d68c981e55c4217a65169590196affa4a60022c8a58044016e",
+    "sensitivity/rejection45/tpe_seed42/best_oof.csv": "2ade69dca1e0273b9c6d102ab56062063bbca81c04ff3583df7526f39a650019",
+    "sensitivity/rejection45/tpe_seed42/summary.json": "67fb6b1c23897a318f88ccf0cf9ef484aeffeeb43341c98bd931a7c0bcd04e50",
+    "sensitivity/rejection45/tpe_seed42/trials.csv": "ec4aa4d99fb9c8113e5f47d1393df3a1a18b75d5efef9bab23db49023bf8746d",
+    "sensitivity/rejection45/tpe_seed42/trials.json": "3ba4c2bc16219e2e65b73947aea3e87ecb9ce1516705a1c192d87ca4105b445c"
+  }
+}

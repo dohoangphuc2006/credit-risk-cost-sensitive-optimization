@@ -1,0 +1,54 @@
+{
+  "status": "fitted_train_only",
+  "created_at_utc": "2026-11-08T10:55:24.336035+00:00",
+  "n_train": 800,
+  "label_counts": {
+    "0": 560,
+    "1": 240
+  },
+  "fit_count": 1,
+  "fit_seconds": 0.14085599999998522,
+  "selection_sha256": "fd7ef1d74d8f67a0eda2a45b9945f5d6f2f12a29fc593708b8e58188359aae9c",
+  "model_file": "final_model.joblib",
+  "model_sha256": "db1a16f57d3f19a7c66508a92aa6a068fbb59205c7171018d0683d77c92ecc38",
+  "model_size_bytes": 221803,
+  "environment": {
+    "python": "3.12.10",
+    "packages": {
+      "numpy": "2.5.4",
+      "pandas": "3.1.0",
+      "scikit-learn": "1.9.1",
+      "optuna": "5.0.0",
+      "matplotlib": "3.11.2"
+    }
+  },
+  "joblib_version": "1.6.0",
+  "threshold": 0.5454772140992292,
+  "rf_params": {
+    "bootstrap": true,
+    "ccp_alpha": 0.0,
+    "class_weight": {
+      "0": 1.0,
+      "1": 2.6301556120420058
+    },
+    "criterion": "gini",
+    "max_depth": 10,
+    "max_features": "sqrt",
+    "max_leaf_nodes": null,
+    "max_samples": null,
+    "min_impurity_decrease": 0.0,
+    "min_samples_leaf": 1,
+    "min_samples_split": 17,
+    "min_weight_fraction_leaf": 0.0,
+    "monotonic_cst": null,
+    "n_estimators": 107,
+    "n_jobs": 1,
+    "oob_score": false,
+    "random_state": 42,
+    "verbose": 0,
+    "warm_start": false
+  },
+  "serialization_check": "Exact probability and prediction match on first 8 training feature rows; no accuracy scored.",
+  "test_evaluated": false,
+  "next_step": "Week 5 part 3 only after explicit request: evaluate the frozen bundle on test."
+}

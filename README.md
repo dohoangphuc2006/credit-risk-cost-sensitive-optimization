@@ -7,7 +7,8 @@ Bài tập lớn cá nhân môn Nhập môn Tối ưu hóa, thực hiện trong 
 - **Sinh viên:** Đỗ Hoàng Phúc
 - **Chuyên ngành:** Trí tuệ nhân tạo, Trường Đại học Văn Lang
 - **Sản phẩm:** GitHub repository gồm mã nguồn, mô hình hóa, log và hình kết quả.
-- **Checkpoint:** Tuần 4 đã chạy đủ 5 seeds và 4 kịch bản độ nhạy; kết quả đã kiểm tra, chờ push. Checkpoint tiếp tục chạy đã được bổ sung sau thực nghiệm.
+- **Tiến độ:** Đã hoàn tất thực nghiệm và portfolio tuần 1–5, gồm đánh giá một lần trên 200 mẫu test bằng mô hình đã khóa. Báo cáo đơn giản cho học phần sẽ làm riêng sau.
+- **Kết quả cuối:** Test cost **0.67/mẫu**, recall bad **66.67%**, tỷ lệ từ chối **37%**. Mô hình vượt trần từ chối 35% trên test **2 điểm phần trăm**; chưa đáp ứng chính sách trên tập kiểm tra này.
 
 ## 1. Problem
 
@@ -149,14 +150,18 @@ Random Search đạt chi phí thấp nhất trong lần chạy seed 42, thấp h
 
 ### Kết quả tuần 4
 
-Đã kiểm tra đủ 16 lượt tìm kiếm mới và checksum đầu ra của lần chạy
-[run-20261108T055756731500Z](results/week4/run-20261108T055756731500Z/).
+Đã kiểm tra đủ 16 lượt tìm kiếm mới và checksum đầu ra của lần chạy có checkpoint
+[run-20261108T104055472068Z](results/week4/run-20261108T104055472068Z/).
 Tổng hợp kịch bản chính qua 5 sampler seeds (bao gồm seed 42 tuần 3):
 
 | Phương pháp | Chi phí OOF trung bình | Sample SD | Seeds khả thi | Thời gian trung bình (giây) |
 | --- | ---: | ---: | ---: | ---: |
-| Random Search | 0.74525 | 0.02825 | 5/5 | 40.28 |
-| TPE | 0.69625 | 0.01225 | 5/5 | 36.65 |
+| Random Search | 0.74525 | 0.02825 | 5/5 | 31.66 |
+| TPE | 0.69625 | 0.01225 | 5/5 | 33.05 |
+
+Lần chạy trước [run-20261108T055756731500Z](results/week4/run-20261108T055756731500Z/)
+được giữ để truy vết. Hai lần có cùng chi phí/cấu hình; thời gian khác do lần chạy.
+Đây vẫn là **5 seeds**, không cộng thành 10 lần thử độc lập.
 
 TPE có chi phí thấp hơn trong 4/5 cặp seeds; mean thấp hơn Random Search khoảng
 6.57% và thấp hơn baseline tối ưu ngưỡng (0.72) khoảng 3.30%. SD thấp hơn cho
@@ -168,8 +173,49 @@ thấy dao động nhỏ hơn trong 5 lần tìm kiếm này trên cùng split/C
 (1.2675) và baseline tối ưu ngưỡng (1.2825) đều thấp hơn TPE. Vì vậy, không có
 phương pháp thắng mọi kịch bản. So sánh cost chỉ trong cùng ma trận chi phí.
 
-![Độ ổn định và runtime](results/week4/run-20261108T055756731500Z/figures/seed_stability_runtime.png)
-![Phân tích độ nhạy](results/week4/run-20261108T055756731500Z/figures/sensitivity.png)
+![Độ ổn định và runtime](results/week4/run-20261108T104055472068Z/figures/seed_stability_runtime.png)
+![Phân tích độ nhạy](results/week4/run-20261108T104055472068Z/figures/sensitivity.png)
+
+### Kết quả cuối tuần 5: kiểm tra mô hình đã khóa
+
+Từ kết quả CV, chọn TPE, sampler seed 100, trial 47 (trial thứ 48), rồi fit
+một lần trên 800 mẫu train. Ngày 09/11/2026, nạp đúng mô hình đã lưu và đánh giá
+một lần trên 200 mẫu test. Giữ nguyên ngưỡng **0.5454772140992292**, cấu hình,
+ma trận chi phí 5:1 và trần từ chối 35%; không chọn lại sau khi xem test.
+
+| Chỉ số | OOF của cấu hình đã chọn (800 mẫu) | Test độc lập (200 mẫu) |
+| --- | ---: | ---: |
+| Chi phí tương đối / mẫu | 0.68000 | **0.67000** |
+| Tổng chi phí tương đối | 544 | 134 |
+| TN / FP / FN / TP | 441 / 119 / 85 / 155 | 106 / 34 / 20 / 40 |
+| Tỷ lệ từ chối | 34.25% | **37.00%** |
+| Tỷ lệ phê duyệt | 65.75% | **63.00%** |
+| Đạt trần từ chối 35% | Có | **Không** |
+| Recall lớp bad | 64.58% | 66.67% |
+| Accuracy | 74.50% | 73.00% |
+| Macro-F1 | 0.70763 | 0.69700 |
+
+Chi phí test tính trực tiếp: `(5 × 20 + 34) / 200 = 0.67`. Mô hình từ chối
+74/200 hồ sơ, vượt mức 70 hồ sơ ứng với trần 35%, tức **4 hồ sơ / 2 điểm phần trăm**.
+Trong 60 mẫu bad, phát hiện 40 và bỏ sót 20; trong 140 mẫu good, từ chối nhầm 34.
+
+**Kết luận:** TPE có mean/SD chi phí OOF tốt hơn Random Search trong thí nghiệm
+5 seeds này. Tuy nhiên, ràng buộc khả thi trên OOF không được giữ trên test.
+Kết quả 0.67 trên test là mô tả hiệu năng của mô hình đã chốt; không phải bằng
+chứng tối ưu toàn cục hoặc đáp ứng chính sách ngoài mẫu. Baseline chưa được
+đánh giá trên test, nên không kết luận mức cải thiện so với baseline trên test.
+OOF dùng để chọn cấu hình có thiên lệch lựa chọn và khác tập mẫu với test.
+
+Giữ nguyên kết quả chưa đạt ràng buộc này. Nếu nghiên cứu tiếp về khoảng đệm
+an toàn hoặc lựa chọn ngưỡng có ràng buộc, cần một protocol train/validation
+và tập kiểm tra mới; không dùng 200 mẫu test đã xem để chọn lại cấu hình.
+
+[Metrics đầy đủ](results/week5/test_metrics.json) ·
+[Dự đoán từng mẫu](results/week5/test_predictions.csv) ·
+[Nhật ký và checksum đánh giá](results/week5/test_evaluation.json) ·
+[Bảng OOF/test](results/week5/oof_vs_test.csv)
+
+![Ma trận nhầm lẫn test cuối](results/week5/test_confusion_matrix.png)
 
 ### Lộ trình 05 Tuần
 
@@ -178,8 +224,8 @@ phương pháp thắng mọi kịch bản. So sánh cost chỉ trong cùng ma tr
 | **1** | Chốt câu hỏi, mô hình hóa toán học, nguồn dữ liệu, split/CV chống rò rỉ và pipeline tiền xử lý | `src/data_utils.py`, `report/week1_formulation.md`, `configs/experiment.json`, data v2 | ✅ Hoàn thành |
 | **2** | Chạy thực nghiệm Baseline mặc định và Baseline quét ngưỡng trên 5-Fold CV; trực quan hóa đồ thị | `src/baseline.py`, `notebooks/01_baseline.ipynb`, `results/`, `figures/` | Đã chạy và push |
 | **3** | Cài đặt hàm mục tiêu có phạt (Penalty Function), chạy Random Search và Optuna TPE trên 5 biến | Source tối ưu, log trials CSV/JSON, đồ thị hội tụ Best-so-far | Đã chạy seed 42 và push |
-| **4** | Thực nghiệm trên 5 sampler seeds; phân tích độ ổn định (Boxplot) và độ nhạy chi phí | Bảng thống kê mean/std, phân tích trade-off và sensitivity | Đã chạy và kiểm tra; chờ push |
-| **5** | Chốt cấu hình tối ưu theo CV, đánh giá khách quan trên 200 mẫu Test, hoàn thiện Portfolio | Bảng so sánh toàn diện, kiểm chứng Test set, đóng gói Release `v1.0` | 📅 Dự kiến |
+| **4** | Thực nghiệm trên 5 sampler seeds; phân tích độ ổn định (Boxplot) và độ nhạy chi phí | Bảng thống kê mean/std, phân tích trade-off và sensitivity | Đã chạy và push |
+| **5** | Chốt cấu hình theo CV, đánh giá trên 200 mẫu Test, hoàn thiện Portfolio | Mô hình đã fit, quyết định khóa, metrics/dự đoán test, README và mã kiểm tra | Hoàn tất phần 1–4; báo cáo đơn giản làm sau |
 
 Tài liệu mô hình hóa nằm trong repository; sản phẩm của dự án là repo GitHub.
 
@@ -387,8 +433,8 @@ Mỗi lần chạy tạo `results/week4/run-<UTC>/` riêng. Khi kết thúc, ter
   Không đồng nhất search runtime với inference latency. Nên dùng cùng máy và môi trường.
 - Trong độ nhạy, so sánh các phương pháp **trong cùng kịch bản**; tăng chi phí FN
   làm đổi thang đo mục tiêu. Chưa kiểm tra độ ổn định nhiều seeds cho độ nhạy.
-- Tập test 200 mẫu vẫn được giữ cho tuần 5. Chưa tự động chốt mô hình cuối hoặc
-  tuyên bố tìm được nghiệm tối ưu toàn cục/Pareto front.
+- Trong tuần 4, test 200 mẫu được giữ nguyên; kết quả đánh giá cuối ở mục tuần 5.
+  Không tuyên bố tìm được nghiệm tối ưu toàn cục/Pareto front.
 
 ### Tiếp tục chạy với checkpoint (các lần chạy mới)
 
@@ -430,6 +476,112 @@ Các kiểm tra config, dữ liệu, môi trường và file kết quả vẫn �
 Nếu lần chạy mới bị ngắt, giữ thư mục đó và dùng `--resume` như trên. Nếu lỗi ghi file tiếp tục,
 có thể tạm dừng đồng bộ OneDrive trong lúc chạy, sau đó bật lại để đồng bộ.
 
+### Tuần 5 phần 1–2: quyết định chọn và mô hình đã fit
+
+**Đã thực hiện:** chọn phương pháp từ train CV, lưu quyết định trước fit, rồi fit
+một pipeline mới trên toàn bộ 800 mẫu train (560 good, 240 bad). Tại thời điểm
+phần 1–2, chưa đọc CSV test; hai bước chạy với kiểm tra chặn thao tác mở file test.
+Kết quả phần 3 được lưu riêng sau đó, không sửa các quyết định trước test.
+
+Quy tắc chọn phương pháp được ghi rõ ở tuần 5, sau khi xem CV và trước test:
+
+- Phương pháp tìm kiếm phải có nghiệm khả thi ở đủ 5 seeds. So sánh trung bình
+  chi phí OOF tốt nhất của từng seed với cost của baseline tối ưu ngưỡng.
+- Chọn chi phí trung bình thấp nhất. Nếu hòa trong sai số số học 1e-12, ưu tiên
+  baseline tối ưu ngưỡng, Random Search rồi TPE. RF mặc định là mốc tham khảo.
+- Trong phương pháp đã chọn, lấy trial khả thi có cost thấp nhất; nếu hòa,
+  ưu tiên ít cây hơn, độ sâu nhỏ hơn, seed theo thứ tự config, rồi trial nhỏ hơn.
+  Đây là quy tắc chọn cấu hình đã ghi ở tuần 1.
+
+| Phương án | Chi phí dùng để chọn phương pháp |
+| --- | ---: |
+| RF tối ưu ngưỡng (OOF cố định) | 0.72000 |
+| Random Search (mean qua 5 seeds) | 0.74525 |
+| **TPE (mean qua 5 seeds)** | **0.69625** |
+
+Cấu hình đã chốt: **TPE, sampler seed 100, trial 47 (đếm từ 0, trial thứ 48)**.
+
+| Thành phần | Giá trị |
+| --- | ---: |
+| `threshold` | 0.5454772140992292 |
+| `n_estimators` | 107 |
+| `max_depth` | 10 |
+| `min_samples_split` | 17 |
+| `class_weight` | `{0: 1.0, 1: 2.6301556120420058}` |
+| RF `random_state` | 42 |
+| Cost OOF của trial đã chọn | 0.68000 |
+| Tỷ lệ từ chối OOF | 34.25% |
+| FN / FP trên OOF | 85 / 119 |
+
+Seed 100 điều khiển tìm kiếm; seed 42 điều khiển RF khi fit. Ngưỡng phân loại
+không được làm tròn khi suy luận. Cost 0.68 là điểm của trial được chọn trên chính
+OOF dùng để tìm kiếm, chưa phải ước lượng test độc lập. Không suy ra mô hình fit
+trên toàn bộ train chắc chắn đạt trần từ chối 35% trên test.
+
+Nguồn quyết định là lần chạy có checkpoint
+[run-20261108T104055472068Z](results/week4/run-20261108T104055472068Z/).
+Kết quả cấu hình/chi phí của lần này khớp lần đã công bố ở tuần 4; không gộp hai
+lần chạy cùng seeds thành 10 seeds độc lập. Độ nhạy không được dùng để đổi chính
+sách chính 5:1 / 35% ở bước chọn cuối.
+
+| Artifact | Vai trò |
+| --- | --- |
+| [selection.json](results/week5/selection.json) | Quy tắc, so sánh phương pháp, cấu hình đã chốt, nguồn/hash và timestamp trước fit |
+| [method_comparison.csv](results/week5/method_comparison.csv) | Bảng lựa chọn phương pháp |
+| [final_model.joblib](results/week5/final_model.joblib) | Pipeline đã fit, threshold, thứ tự đặc trưng và hash quyết định chọn |
+| [fit_metadata.json](results/week5/fit_metadata.json) | Xác nhận fit 1 lần/800 mẫu, params, môi trường, hash mô hình và `test_evaluated: false` |
+
+Mô hình đã được nạp lại và đối chiếu xác suất/nhãn trên 8 hàng đặc trưng train;
+đây chỉ là kiểm tra lưu/nạp, không dùng làm điểm đánh giá. Khi sử dụng bundle,
+gọi `predict_with_threshold` trong `src/final_model.py`; `pipeline.predict()` dùng
+ngưỡng mặc định và không biểu diễn quyết định tín dụng đã chốt. Chỉ nạp file
+joblib do dự án tạo hoặc từ nguồn tin cậy, trong môi trường thư viện tương ứng.
+
+Các lệnh dùng để tái lập hai bước trên một bản dự án chưa có artifact tuần 5:
+
+```powershell
+.\.venv\Scripts\python.exe -m src.finalize select
+.\.venv\Scripts\python.exe -m src.finalize fit
+```
+
+Hiện tại đã chạy xong hai bước, **không cần chạy lại**. Lệnh từ chối ghi đè quyết
+định hoặc fit lại mô hình đã lưu. Quy tắc lựa chọn phương pháp được ghi nhận sau khi đã xem CV,
+không được mô tả là một quy tắc đăng ký trước khi nhìn dữ liệu.
+
+### Tuần 5 phần 3–4: đánh giá cuối và kiểm tra portfolio
+
+```powershell
+.\.venv\Scripts\python.exe -m src.evaluate_final
+.\.venv\Scripts\python.exe -m unittest discover -s tests -v
+```
+
+Lệnh đầu đã được chạy. Khi artifact hoàn tất còn nguyên, lệnh chỉ kiểm tra hash
+và hiển thị kết quả đã lưu, **không đọc lại test hoặc chạy lại mô hình**.
+Trong lần đầu, chương trình kiểm tra quyết định/mô hình/config/môi trường,
+khóa lượt đánh giá, xác minh split/schema test rồi dự đoán với ngưỡng đã chốt.
+Không có fit hay quét ngưỡng trong bước này. Nếu bị ngắt, giữ nhật ký và kiểm tra
+nguyên nhân; không xóa dấu vết để thử nhiều mô hình trên test.
+
+| File phần 3 | Nội dung |
+| --- | --- |
+| `test_metrics.json` | Chi phí, FN/FP/TP/TN, accuracy, recall/F1, tỷ lệ phê duyệt và mức vi phạm |
+| `test_predictions.csv` | 200 row IDs, nhãn thật, xác suất bad và quyết định cuối |
+| `test_evaluation.json` | Thời điểm, trạng thái, hash đầu vào/đầu ra, 1 lượt đánh giá, 0 lần fit |
+| `oof_vs_test.csv` | Hai tập điểm được ghi rõ vai trò: OOF lựa chọn và test kiểm tra |
+| `test_confusion_matrix.png` | Ma trận nhầm lẫn trên test |
+
+`test_evaluated: false` trong `selection.json` và `fit_metadata.json` phản ánh
+thời điểm chọn/fit. Trạng thái cuối `test_evaluated: true` nằm trong
+`test_evaluation.json`; không sửa ngược lịch sử để cập nhật trạng thái.
+
+Bộ **34 kiểm thử** dùng dữ liệu giả kiểm tra objective, logs, thống kê nhiều seeds,
+checkpoint/resume, lựa chọn, lưu/nạp mô hình, đánh giá đúng ngưỡng và chặn đánh giá
+lặp/đầu vào thay đổi. Kiểm thử không sử dụng 200 mẫu holdout làm fixture.
+`.gitattributes` cố định kiểu xuống dòng của các file có checksum, gồm ngoại lệ
+CRLF của dữ liệu/log cũ, để checkout trên máy khác giữ đúng byte đã ghi nhận.
+Các checkpoint Optuna chỉ lưu nội bộ; bản GitHub cung cấp log/kết quả để kiểm tra,
+không cung cấp trạng thái resume. Lần tuần 4 đã hoàn tất không cần resume.
+
 ## 7. Repository structure
 
 ```text
@@ -449,7 +601,10 @@ credit-risk-cost-sensitive-optimization/
 │   ├── objective.py             # Đánh giá cấu hình bằng pooled OOF và penalty
 │   ├── optimize.py              # Random Search / TPE, log và đồ thị
 │   ├── week4.py                 # Tái sử dụng seed 42, bổ sung seeds và sensitivity
-│   └── week4_analysis.py        # Thống kê, so sánh cặp seed và biểu đồ
+│   ├── week4_analysis.py        # Thống kê, so sánh cặp seed và biểu đồ
+│   ├── finalize.py              # Chốt lựa chọn, fit train; không đọc test
+│   ├── final_model.py           # Pipeline và suy luận bằng threshold đã chốt
+│   └── evaluate_final.py        # Đánh giá test một lần, đọc lại kết quả đã lưu
 ├── data/
 │   ├── README.md
 │   ├── credit_train.csv         # 800 mẫu với đặc trưng chưa mã hóa
@@ -458,10 +613,14 @@ credit-risk-cost-sensitive-optimization/
 │   ├── cv_folds.json            # Năm folds đã lưu từ lần chạy v2
 │   └── german_credit_data.csv   # File cũ, không dùng trong thực nghiệm
 ├── notebooks/
-├── results/                    # Baseline, week3/run-<UTC>/, week4/run-<UTC>/
+├── results/                    # Baseline, week3/, week4/, week5/ (mô hình và test)
 ├── tests/
 │   ├── test_optimization.py     # Kiểm tra bằng dữ liệu giả
-│   └── test_week4.py            # Kiểm tra thống kê, reuse, sensitivity và xuất file
+│   ├── test_week4.py            # Kiểm tra thống kê, reuse, sensitivity và xuất file
+│   ├── test_artifacts.py        # Ghi log nguyên tử và retry
+│   ├── test_resume.py           # Ngắt/tiếp tục tìm kiếm giữ nguyên RNG
+│   ├── test_finalize.py         # Chọn bằng CV và refit train
+│   └── test_evaluate_final.py   # Bảo vệ holdout và kiểm tra artifact cuối
 ├── figures/
 └── report/
     └── week1_formulation.md     # Ghi chú mô hình hóa trong repo
@@ -472,8 +631,8 @@ credit-risk-cost-sensitive-optimization/
 - German Credit là benchmark nhỏ, công bố năm 1994; không đại diện cho tín dụng
   Việt Nam hiện nay. Nhãn bad không chứng minh hành vi cố tình không trả nợ.
 - Chi phí 5:1 và mức phê duyệt 65% không đủ để suy ra tiết kiệm tiền thật.
-- Feasibility trên CV không đảm bảo tỷ lệ phê duyệt tương lai; test cuối phải
-  báo cả chi phí lẫn mức vi phạm ràng buộc, nếu có.
+- Feasibility trên CV không đảm bảo tỷ lệ phê duyệt tương lai: mô hình cuối
+  từ chối 37% trên test, vượt trần 35%. Chưa thể coi là đáp ứng chính sách triển khai.
 - Năm sampler seeds đo độ ổn định tìm kiếm trên một split/CV cố định,
   không đo đầy đủ bất định lấy mẫu hay thay đổi phân phối dữ liệu.
 - **AI assistance:** AI hỗ trợ mô hình hóa, viết/chỉnh code chuẩn bị dữ liệu,
@@ -485,25 +644,28 @@ credit-risk-cost-sensitive-optimization/
   dữ liệu giả. Sinh viên đã chạy Random Search/TPE với seed 42; chưa đánh giá test.
   AI hỗ trợ triển khai tuần 4, kiểm tra dữ liệu giả và bổ sung checkpoint. Sinh viên
   đã chạy thực nghiệm tuần 4; AI kiểm tra kết quả và cập nhật diễn giải. Các kiểm tra giả không được dùng làm kết quả môn học.
+  AI đã thực hiện tuần 5 theo yêu cầu: chốt lựa chọn bằng CV, fit lại một lần trên
+  train, kiểm tra lưu/nạp, rồi đánh giá một lần trên test khi sinh viên yêu cầu.
+  AI bổ sung kiểm thử, đối chiếu kết quả, hoàn thiện README và commit/push.
   Sinh viên chịu trách nhiệm hiểu và giải thích từng bước của dự án.
 
-## 9. Commit and push after running
+## 9. Commit and push
 
-Sau khi tuần 4 chạy thành công, kiểm tra `run_metadata.json` có `status: complete`,
-đủ 10 dòng `per_seed.csv`, bảng tổng hợp và 3 hình. Cập nhật phần Key Results và
-checkpoint từ số liệu thực tế; không ghi hoàn tất chỉ từ kết quả kiểm tra code.
-
-Thay đường dẫn mẫu bằng thư mục chạy thực tế được in trong terminal:
+Bản hiện tại hoàn tất thực nghiệm tuần 5 và portfolio, gồm kết quả chưa đạt trần
+từ chối trên test. Nguồn quyết định dùng lần chạy tuần 4 có checkpoint, nên commit
+cả log của lần đó (checkpoint nội bộ đã được `.gitignore` bỏ qua).
+Các lệnh tương ứng để lưu những thay đổi này:
 
 ```powershell
 git status --short
 git diff --check
-git add README.md .gitignore src/week4.py src/week4_analysis.py src/optimize.py src/artifacts.py src/resumable_search.py tests/test_week4.py tests/test_artifacts.py tests/test_resume.py
-git add "results/week4/run-20261108T055756731500Z"
+git add README.md .gitattributes src/finalize.py src/final_model.py src/evaluate_final.py tests/test_finalize.py tests/test_evaluate_final.py
+git add results/week4/run-20261108T104055472068Z results/week5
 git diff --cached --stat
-git commit -m "feat(week4): analyze search stability and cost sensitivity"
+git commit -m "feat(week5): evaluate frozen model and finalize experiment portfolio"
 git push origin main
 ```
 
-Giữ file dữ liệu và các kết quả tuần 1–3 đã commit. Không cần đưa tài liệu học
-của giảng viên vào commit thực nghiệm. Không dùng force-push.
+Giữ các kết quả tuần trước để truy vết. Tài liệu giảng viên và lần chạy bị ngắt
+không cần thêm vào commit này. Không cần chạy lại thí nghiệm để tạo thêm commit.
+Báo cáo đơn giản theo yêu cầu mới của giảng viên được thực hiện riêng sau.

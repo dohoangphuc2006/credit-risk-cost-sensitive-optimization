@@ -1,0 +1,16 @@
+# Preserve the exact working-tree bytes recorded in experiment checksums.
+*.py text eol=lf
+*.json text eol=lf
+*.csv text eol=lf
+
+# These historical artifacts were generated with CRLF before atomic LF logging.
+/src/week4.py text eol=crlf
+/data/*.csv text eol=crlf
+/results/baseline_default.json text eol=crlf
+/results/baseline_threshold_sweep.json text eol=crlf
+/results/baseline_oof.csv text eol=crlf
+/results/threshold_sweep.csv text eol=crlf
+/results/week3/**/*.csv text eol=crlf
+/results/week4/run-20261108T055756731500Z/review.md text eol=crlf
+
+/results/week5/*.joblib -text

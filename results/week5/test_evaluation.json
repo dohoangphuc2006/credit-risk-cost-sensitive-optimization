@@ -1,0 +1,41 @@
+{
+  "format_version": 1,
+  "status": "complete",
+  "started_at_utc": "2026-11-09T02:20:05.190974+00:00",
+  "evaluation_count": 1,
+  "fit_count": 0,
+  "test_evaluated": true,
+  "frozen_artifact_sha256": {
+    "selection.json": "fd7ef1d74d8f67a0eda2a45b9945f5d6f2f12a29fc593708b8e58188359aae9c",
+    "fit_metadata.json": "e6a0a849c846fba2ffc437f1461d66f71b37ee10a62e6f8dfe61f960a5fe5777",
+    "final_model.joblib": "db1a16f57d3f19a7c66508a92aa6a068fbb59205c7171018d0683d77c92ecc38"
+  },
+  "implementation_sha256": {
+    "evaluate_final.py": "2b1a0d709a62cf09a6a9bc794585d3653de8f9636a0ab17e23bb6539ae82bf51",
+    "final_model.py": "026940482061216e2d27c90b80cc325fc5584987ce3d60e0a0d185e44da59316",
+    "baseline.py": "7807f35bc8486a6be29c5a2a09ac4fa99a3b7492a430bac7541231468bcf4e0d"
+  },
+  "environment": {
+    "python": "3.12.10",
+    "packages": {
+      "numpy": "2.5.4",
+      "pandas": "3.1.0",
+      "scikit-learn": "1.9.1",
+      "optuna": "5.0.0",
+      "matplotlib": "3.11.2"
+    }
+  },
+  "joblib_version": "1.6.0",
+  "protocol": "One frozen pipeline/threshold; no fit, threshold sweep, model selection or test-based tuning.",
+  "n_test": 200,
+  "inference_seconds": 0.0433663000001161,
+  "test_sha256": "3697a6532cf4460dfea54f78a8953dc71e990ef5d8975a5e344cb67f125a63c2",
+  "dataset_metadata_sha256": "8b37670eec450319d0545c5bf57bc2dcb9e29e1965ea82fe5b1c5fb38bb7596b",
+  "completed_at_utc": "2026-11-09T02:20:05.422972+00:00",
+  "output_sha256": {
+    "test_predictions.csv": "598230bdcd55eb9ed31c7b8f1e70e093edb15a97713d4841dc9d65020e8b7c91",
+    "test_metrics.json": "657117437c573a1e09dd2d60f37e6fab2c8340dc1e0cd4496d838fed9dab4302",
+    "oof_vs_test.csv": "6fbcc8973c82e3ce9f83ce1105b98c21112d10333a9df14d508276b2439e979e",
+    "test_confusion_matrix.png": "33deef225427ffce1664d7e69b197f76b23356e2ab3666e5cc55b0f75d63bfc6"
+  }
+}

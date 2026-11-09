@@ -1,0 +1,268 @@
+{
+  "format_version": 1,
+  "status": "frozen_before_test",
+  "created_at_utc": "2026-11-08T10:55:10.791855+00:00",
+  "rule": {
+    "method_metric": "Lowest mean of best feasible OOF cost over all 5 planned sampler seeds; baseline threshold uses its single deterministic OOF cost.",
+    "eligibility": "Search methods must have a feasible candidate in every planned seed.",
+    "method_tie_order": [
+      "baseline_threshold",
+      "random",
+      "tpe"
+    ],
+    "numeric_tolerance": 1e-12,
+    "candidate_tie_order": [
+      "cost",
+      "n_estimators",
+      "max_depth",
+      "sampler_seed_config_order",
+      "trial_number"
+    ],
+    "timing": "Method comparison rule explicitly recorded at week 5 after viewing CV, before any test evaluation; not a preregistered blind comparison."
+  },
+  "source_run": "results/week4/run-20261108T104055472068Z",
+  "source_metadata_sha256": "39f790cb2609f4f26f3ecf9e1a8ef67d5dd2d0e718d4f6a0ae76ffecae586a4c",
+  "candidate_oof_path": "results/week4/run-20261108T104055472068Z/main/tpe_seed100/best_oof.csv",
+  "candidate_oof_sha256": "fa76e199f0c7e6f7968496e07f129467189700c0d2f7c7d1e956816daa35f390",
+  "comparison": [
+    {
+      "method": "baseline_threshold",
+      "eligible": true,
+      "n_seeds": 1,
+      "n_feasible_seeds": 1,
+      "mean_oof_cost": 0.72,
+      "std_oof_cost": null
+    },
+    {
+      "method": "random",
+      "eligible": true,
+      "n_seeds": 5,
+      "n_feasible_seeds": 5,
+      "mean_oof_cost": 0.7452500000000001,
+      "std_oof_cost": 0.028248340659231666
+    },
+    {
+      "method": "tpe",
+      "eligible": true,
+      "n_seeds": 5,
+      "n_feasible_seeds": 5,
+      "mean_oof_cost": 0.69625,
+      "std_oof_cost": 0.01224744871391587
+    }
+  ],
+  "selected": {
+    "method": "tpe",
+    "sampler_seed": 100,
+    "trial_number": 47,
+    "params": {
+      "threshold": 0.5454772140992292,
+      "n_estimators": 107,
+      "max_depth": 10,
+      "min_samples_split": 17,
+      "bad_class_weight": 2.6301556120420058
+    },
+    "metrics": {
+      "n_samples": 800,
+      "TN": 441,
+      "FP": 119,
+      "FN": 85,
+      "TP": 155,
+      "total_cost": 544.0,
+      "cost_per_sample": 0.68,
+      "rejection_rate": 0.3425,
+      "approval_rate": 0.6575,
+      "accuracy": 0.745,
+      "precision_bad": 0.5656934306569343,
+      "recall_bad": 0.6458333333333334,
+      "f1_bad": 0.603112840466926,
+      "f1_macro": 0.7076337682997613
+    },
+    "constraint_g": -0.007499999999999951,
+    "constraint_violation": 0.0,
+    "feasible": true,
+    "objective": 0.68,
+    "fold_details": [
+      {
+        "fold": 0,
+        "n_samples": 160,
+        "TN": 91,
+        "FP": 21,
+        "FN": 17,
+        "TP": 31,
+        "total_cost": 106.0,
+        "cost_per_sample": 0.6625,
+        "rejection_rate": 0.325,
+        "approval_rate": 0.675
+      },
+      {
+        "fold": 1,
+        "n_samples": 160,
+        "TN": 92,
+        "FP": 20,
+        "FN": 16,
+        "TP": 32,
+        "total_cost": 100.0,
+        "cost_per_sample": 0.625,
+        "rejection_rate": 0.325,
+        "approval_rate": 0.675
+      },
+      {
+        "fold": 2,
+        "n_samples": 160,
+        "TN": 83,
+        "FP": 29,
+        "FN": 17,
+        "TP": 31,
+        "total_cost": 114.0,
+        "cost_per_sample": 0.7125,
+        "rejection_rate": 0.375,
+        "approval_rate": 0.625
+      },
+      {
+        "fold": 3,
+        "n_samples": 160,
+        "TN": 89,
+        "FP": 23,
+        "FN": 21,
+        "TP": 27,
+        "total_cost": 128.0,
+        "cost_per_sample": 0.8,
+        "rejection_rate": 0.3125,
+        "approval_rate": 0.6875
+      },
+      {
+        "fold": 4,
+        "n_samples": 160,
+        "TN": 86,
+        "FP": 26,
+        "FN": 14,
+        "TP": 34,
+        "total_cost": 96.0,
+        "cost_per_sample": 0.6,
+        "rejection_rate": 0.375,
+        "approval_rate": 0.625
+      }
+    ],
+    "fit_count": 5,
+    "evaluation_seconds": 0.5394688000001224
+  },
+  "model_seed": 42,
+  "config": {
+    "dataset": {
+      "openml_id": 31,
+      "name": "credit-g",
+      "expected_samples": 1000,
+      "expected_features": 20
+    },
+    "split": {
+      "test_size": 0.2,
+      "seed": 42
+    },
+    "cv": {
+      "n_splits": 5,
+      "shuffle": true,
+      "seed": 42
+    },
+    "model_seed": 42,
+    "optimization": {
+      "trials_per_seed": 50,
+      "sampler_seeds": [
+        42,
+        100,
+        2024,
+        2025,
+        2026
+      ],
+      "search_space": {
+        "threshold": {
+          "type": "float",
+          "low": 0.1,
+          "high": 0.9
+        },
+        "n_estimators": {
+          "type": "int",
+          "low": 20,
+          "high": 200
+        },
+        "max_depth": {
+          "type": "int",
+          "low": 2,
+          "high": 15
+        },
+        "min_samples_split": {
+          "type": "int",
+          "low": 2,
+          "high": 20
+        },
+        "bad_class_weight": {
+          "type": "float",
+          "low": 1.0,
+          "high": 10.0
+        }
+      }
+    },
+    "cost": {
+      "false_negative": 5.0,
+      "false_positive": 1.0
+    },
+    "policy": {
+      "max_rejection_rate": 0.35,
+      "constraint_scope": "pooled_train_oof",
+      "penalty_multiplier": 10.0
+    },
+    "sensitivity": {
+      "planned_max_rejection_rates": [
+        0.25,
+        0.35,
+        0.45
+      ],
+      "planned_false_negative_costs": [
+        2.0,
+        5.0,
+        10.0
+      ]
+    }
+  },
+  "config_sha256": "e906d974ddd2ab383c526104b7580634802a838655cdd921a1112d6a3a3f4207",
+  "environment": {
+    "python": "3.12.10",
+    "packages": {
+      "numpy": "2.5.4",
+      "pandas": "3.1.0",
+      "scikit-learn": "1.9.1",
+      "optuna": "5.0.0",
+      "matplotlib": "3.11.2"
+    }
+  },
+  "feature_columns": [
+    "checking_status",
+    "duration",
+    "credit_history",
+    "purpose",
+    "credit_amount",
+    "savings_status",
+    "employment",
+    "installment_commitment",
+    "personal_status",
+    "other_parties",
+    "residence_since",
+    "property_magnitude",
+    "age",
+    "other_payment_plans",
+    "housing",
+    "existing_credits",
+    "job",
+    "num_dependents",
+    "own_telephone",
+    "foreign_worker"
+  ],
+  "n_train": 800,
+  "train_sha256": "8281704fe68e1ce1747342a0125560399f09e2ce8d9f88dec24c3f4dbf5d97bc",
+  "cv_sha256": "d78957043cee5a641883146569c445b12f3353b7c419f500ffdfe26fee112a25",
+  "implementation_sha256": {
+    "finalize.py": "5d7e758cc730ee53a5d2ab26b6a8c7a203d650e984df5fc2709c2134b8ef54a3",
+    "final_model.py": "026940482061216e2d27c90b80cc325fc5584987ce3d60e0a0d185e44da59316",
+    "preprocessing.py": "f6063906e336f6987ca493a0d783da1065c3802f43966b68cb8ed8052f34a8d1"
+  },
+  "test_evaluated": false
+}

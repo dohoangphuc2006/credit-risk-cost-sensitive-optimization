@@ -1,0 +1,4 @@
+method,eligible,n_seeds,n_feasible_seeds,mean_oof_cost,std_oof_cost
+baseline_threshold,True,1,1,0.72,
+random,True,5,5,0.7452500000000001,0.028248340659231666
+tpe,True,5,5,0.69625,0.01224744871391587

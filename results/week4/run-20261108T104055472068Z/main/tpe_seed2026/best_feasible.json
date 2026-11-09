@@ -1,0 +1,96 @@
+{
+  "method": "tpe",
+  "sampler_seed": 2026,
+  "trial_number": 13,
+  "params": {
+    "threshold": 0.6689580570524922,
+    "n_estimators": 195,
+    "max_depth": 11,
+    "min_samples_split": 7,
+    "bad_class_weight": 6.194263657014763
+  },
+  "metrics": {
+    "n_samples": 800,
+    "TN": 450,
+    "FP": 110,
+    "FN": 90,
+    "TP": 150,
+    "total_cost": 560.0,
+    "cost_per_sample": 0.7,
+    "rejection_rate": 0.325,
+    "approval_rate": 0.675,
+    "accuracy": 0.75,
+    "precision_bad": 0.5769230769230769,
+    "recall_bad": 0.625,
+    "f1_bad": 0.6,
+    "f1_macro": 0.7090909090909091
+  },
+  "constraint_g": -0.024999999999999967,
+  "constraint_violation": 0.0,
+  "feasible": true,
+  "objective": 0.7,
+  "fold_details": [
+    {
+      "fold": 0,
+      "n_samples": 160,
+      "TN": 91,
+      "FP": 21,
+      "FN": 19,
+      "TP": 29,
+      "total_cost": 116.0,
+      "cost_per_sample": 0.725,
+      "rejection_rate": 0.3125,
+      "approval_rate": 0.6875
+    },
+    {
+      "fold": 1,
+      "n_samples": 160,
+      "TN": 92,
+      "FP": 20,
+      "FN": 14,
+      "TP": 34,
+      "total_cost": 90.0,
+      "cost_per_sample": 0.5625,
+      "rejection_rate": 0.3375,
+      "approval_rate": 0.6625
+    },
+    {
+      "fold": 2,
+      "n_samples": 160,
+      "TN": 87,
+      "FP": 25,
+      "FN": 17,
+      "TP": 31,
+      "total_cost": 110.0,
+      "cost_per_sample": 0.6875,
+      "rejection_rate": 0.35,
+      "approval_rate": 0.65
+    },
+    {
+      "fold": 3,
+      "n_samples": 160,
+      "TN": 91,
+      "FP": 21,
+      "FN": 24,
+      "TP": 24,
+      "total_cost": 141.0,
+      "cost_per_sample": 0.88125,
+      "rejection_rate": 0.28125,
+      "approval_rate": 0.71875
+    },
+    {
+      "fold": 4,
+      "n_samples": 160,
+      "TN": 89,
+      "FP": 23,
+      "FN": 16,
+      "TP": 32,
+      "total_cost": 103.0,
+      "cost_per_sample": 0.64375,
+      "rejection_rate": 0.34375,
+      "approval_rate": 0.65625
+    }
+  ],
+  "fit_count": 5,
+  "evaluation_seconds": 0.9335221999999703
+}
