@@ -1,0 +1,72 @@
+{
+  "method": "tpe",
+  "sampler_seed": 42,
+  "trial_number": 27,
+  "params": {
+    "threshold": 0.7009235061519199,
+    "n_estimators": 180,
+    "max_depth": 12,
+    "min_samples_split": 15,
+    "bad_class_weight": 6.390445275810531
+  },
+  "metrics": {
+    "n_samples": 640,
+    "TN": 352,
+    "FP": 96,
+    "FN": 73,
+    "TP": 119,
+    "total_cost": 461.0,
+    "cost_per_sample": 0.7203125,
+    "rejection_rate": 0.3359375,
+    "approval_rate": 0.6640625,
+    "accuracy": 0.7359375,
+    "precision_bad": 0.5534883720930233,
+    "recall_bad": 0.6197916666666666,
+    "f1_bad": 0.5847665847665847,
+    "f1_macro": 0.695590623425675
+  },
+  "constraint_g": -0.014062499999999978,
+  "constraint_violation": 0.0,
+  "feasible": true,
+  "objective": 0.7203125,
+  "fold_details": [
+    {
+      "fold": 0,
+      "n_samples": 214,
+      "TN": 113,
+      "FP": 37,
+      "FN": 27,
+      "TP": 37,
+      "total_cost": 172.0,
+      "cost_per_sample": 0.8037383177570093,
+      "rejection_rate": 0.34579439252336447,
+      "approval_rate": 0.6542056074766356
+    },
+    {
+      "fold": 1,
+      "n_samples": 213,
+      "TN": 122,
+      "FP": 27,
+      "FN": 20,
+      "TP": 44,
+      "total_cost": 127.0,
+      "cost_per_sample": 0.596244131455399,
+      "rejection_rate": 0.3333333333333333,
+      "approval_rate": 0.6666666666666667
+    },
+    {
+      "fold": 2,
+      "n_samples": 213,
+      "TN": 117,
+      "FP": 32,
+      "FN": 26,
+      "TP": 38,
+      "total_cost": 162.0,
+      "cost_per_sample": 0.7605633802816901,
+      "rejection_rate": 0.3286384976525822,
+      "approval_rate": 0.6713615023474178
+    }
+  ],
+  "fit_count": 3,
+  "evaluation_seconds": 0.47197189999997136
+}

@@ -1,0 +1,85 @@
+{
+  "method": "tpe",
+  "sampler_seed": 42,
+  "status": "complete",
+  "requested_trials": 50,
+  "completed_trials": 50,
+  "completed_fit_count": 150,
+  "feasible_trials": 27,
+  "elapsed_seconds": 20.33145740000009,
+  "checkpoint_sessions": 1,
+  "runtime_note": "Saved active time; downtime and work since last durable checkpoint excluded.",
+  "best_feasible": {
+    "method": "tpe",
+    "sampler_seed": 42,
+    "trial_number": 31,
+    "params": {
+      "threshold": 0.7946380709985913,
+      "n_estimators": 181,
+      "max_depth": 5,
+      "min_samples_split": 19,
+      "bad_class_weight": 9.172229130964977
+    },
+    "metrics": {
+      "n_samples": 640,
+      "TN": 373,
+      "FP": 75,
+      "FN": 90,
+      "TP": 102,
+      "total_cost": 525.0,
+      "cost_per_sample": 0.8203125,
+      "rejection_rate": 0.2765625,
+      "approval_rate": 0.7234375,
+      "accuracy": 0.7421875,
+      "precision_bad": 0.576271186440678,
+      "recall_bad": 0.53125,
+      "f1_bad": 0.5528455284552846,
+      "f1_macro": 0.6858629398588167
+    },
+    "constraint_g": -0.0234375,
+    "constraint_violation": 0.0,
+    "feasible": true,
+    "objective": 0.8203125,
+    "fold_details": [
+      {
+        "fold": 0,
+        "n_samples": 214,
+        "TN": 125,
+        "FP": 25,
+        "FN": 21,
+        "TP": 43,
+        "total_cost": 130.0,
+        "cost_per_sample": 0.6074766355140186,
+        "rejection_rate": 0.3177570093457944,
+        "approval_rate": 0.6822429906542056
+      },
+      {
+        "fold": 1,
+        "n_samples": 213,
+        "TN": 125,
+        "FP": 24,
+        "FN": 32,
+        "TP": 32,
+        "total_cost": 184.0,
+        "cost_per_sample": 0.863849765258216,
+        "rejection_rate": 0.26291079812206575,
+        "approval_rate": 0.7370892018779343
+      },
+      {
+        "fold": 2,
+        "n_samples": 213,
+        "TN": 123,
+        "FP": 26,
+        "FN": 37,
+        "TP": 27,
+        "total_cost": 211.0,
+        "cost_per_sample": 0.9906103286384976,
+        "rejection_rate": 0.24882629107981222,
+        "approval_rate": 0.7511737089201878
+      }
+    ],
+    "fit_count": 3,
+    "evaluation_seconds": 0.4471665999999459
+  },
+  "selection_status": "feasible_found"
+}

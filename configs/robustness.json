@@ -1,0 +1,15 @@
+{
+  "scope": "Exploratory follow-up after original test disclosure; original 800 train rows only",
+  "outer_folds": 5,
+  "outer_seed": 20261109,
+  "inner_folds": 3,
+  "inner_seed": 20261110,
+  "sampler_seed": 42,
+  "trials_per_search": 50,
+  "inner_rejection_caps": [0.30, 0.32, 0.35],
+  "evaluation_rejection_cap": 0.35,
+  "threshold_grid": {"low": 0.10, "high": 0.90, "step": 0.01},
+  "selection": "Separate TPE search for each cap; inner OOF cost only. No outer labels used in selection.",
+  "failure": "No feasible inner candidate means missing outer predictions; never relax a cap or substitute an infeasible candidate.",
+  "interpretation": "Report every prespecified variant. Outer folds measure split variation, not 5 independent sampler seeds. Do not select a deployment model from these outer scores."
+}

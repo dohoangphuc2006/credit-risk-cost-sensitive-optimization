@@ -9,6 +9,7 @@ Bài tập lớn cá nhân môn Nhập môn Tối ưu hóa, thực hiện trong 
 - **Sản phẩm:** GitHub repository gồm mã nguồn, mô hình hóa, log và hình kết quả.
 - **Tiến độ:** Đã hoàn tất thực nghiệm và portfolio tuần 1–5, gồm đánh giá một lần trên 200 mẫu test bằng mô hình đã khóa. Báo cáo đơn giản cho học phần sẽ làm riêng sau.
 - **Kết quả cuối:** Test cost **0.67/mẫu**, recall bad **66.67%**, tỷ lệ từ chối **37%**. Mô hình vượt trần từ chối 35% trên test **2 điểm phần trăm**; chưa đáp ứng chính sách trên tập kiểm tra này.
+- **Nghiên cứu bổ sung:** Đã chạy nested CV trên train gốc với khoảng đệm 30%/32%/35% (750 trials). Khoảng đệm giảm tỷ lệ từ chối gộp, nhưng tăng chi phí và vẫn có fold vi phạm; kết quả test gốc giữ nguyên.
 
 ## 1. Problem
 
@@ -202,8 +203,8 @@ Trong 60 mẫu bad, phát hiện 40 và bỏ sót 20; trong 140 mẫu good, từ
 **Kết luận:** TPE có mean/SD chi phí OOF tốt hơn Random Search trong thí nghiệm
 5 seeds này. Tuy nhiên, ràng buộc khả thi trên OOF không được giữ trên test.
 Kết quả 0.67 trên test là mô tả hiệu năng của mô hình đã chốt; không phải bằng
-chứng tối ưu toàn cục hoặc đáp ứng chính sách ngoài mẫu. Baseline chưa được
-đánh giá trên test, nên không kết luận mức cải thiện so với baseline trên test.
+chứng tối ưu toàn cục hoặc đáp ứng chính sách ngoài mẫu. Ở lần đánh giá đầu,
+chỉ có TPE; so sánh bổ sung với hai baseline được ghi riêng ngay bên dưới.
 OOF dùng để chọn cấu hình có thiên lệch lựa chọn và khác tập mẫu với test.
 
 Giữ nguyên kết quả chưa đạt ràng buộc này. Nếu nghiên cứu tiếp về khoảng đệm
@@ -216,6 +217,85 @@ và tập kiểm tra mới; không dùng 200 mẫu test đã xem để chọn l�
 [Bảng OOF/test](results/week5/oof_vs_test.csv)
 
 ![Ma trận nhầm lẫn test cuối](results/week5/test_confusion_matrix.png)
+
+### So sánh bổ sung: hai baseline trên cùng tập test
+
+Phân tích này được yêu cầu **sau khi đã xem kết quả test của TPE**. Hai baseline
+và ngưỡng 0.50/0.38 đã được xác định từ tuần 2 bằng train OOF; giữ nguyên các
+tham số đó, không quét ngưỡng trên test. Fit một Random Forest mặc định trên
+800 mẫu train, rồi dùng cùng xác suất để tính hai bộ quyết định. TPE dùng lại
+dự đoán test đã lưu; không fit hoặc dự đoán lại TPE, không đổi mô hình được chọn.
+
+| Phương án | Ngưỡng | Cost / mẫu | FN | FP | Recall bad | Từ chối | Đạt trần 35% |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | --- |
+| RF mặc định | 0.50 | 0.89000 | 33 | 13 | 45.00% | 20.00% | **Có** |
+| RF tối ưu ngưỡng bằng OOF | 0.38 | 0.69000 | 21 | 33 | 65.00% | 36.00% | Không |
+| TPE đã khóa | 0.5454772140992292 | **0.67000** | 20 | 34 | 66.67% | 37.00% | Không |
+
+Trên cùng 200 mẫu test này, chi phí tương đối của TPE thấp hơn RF mặc định
+**24.72%**, và thấp hơn baseline tối ưu ngưỡng **2.90%**. So với baseline ngưỡng
+0.38, TPE bỏ sót ít hơn 1 mẫu bad nhưng từ chối nhầm thêm 1 mẫu good: tổng chi phí
+giảm từ 138 xuống 134 đơn vị, còn số hồ sơ bị từ chối tăng từ 72 lên 74.
+
+**TPE giảm chi phí quan sát được, nhưng chưa đạt yêu cầu tối ưu có ràng buộc
+trên test.** Trong ba phương án đã đánh giá, chỉ RF mặc định đáp ứng trần từ
+chối 35%, với chi phí cao hơn. Không thể tuyên bố TPE là phương án khả thi tốt
+nhất. Đây là so sánh mô tả bổ sung trên một tập test nhỏ, không phải kiểm định
+ý nghĩa thống kê hoặc so sánh đăng ký trước; không dùng kết quả để chọn lại ngưỡng.
+
+[Bảng so sánh CSV](results/week5/baseline_test/comparison.csv) ·
+[Metrics đầy đủ](results/week5/baseline_test/metrics.json) ·
+[Dự đoán cùng row IDs](results/week5/baseline_test/predictions.csv) ·
+[Nhật ký bổ sung](results/week5/baseline_test/evaluation.json)
+
+![So sánh chi phí và tỷ lệ từ chối trên test](results/week5/baseline_test/comparison.png)
+
+### Kết quả bổ sung: khoảng đệm trong nested cross-validation
+
+Lần chạy [run-20261109T024250942600Z](results/robustness/run-20261109T024250942600Z/)
+đã hoàn tất **15 tìm kiếm, 750 trials và 2.285 lần fit**. Cả bảy phương án có
+đủ 800 dự đoán vòng ngoài. Toàn bộ tìm kiếm, chọn ngưỡng và tiền xử lý nằm
+trong vòng train tương ứng; 200 mẫu test cũ không được mở.
+
+| Phương án | Trần chọn trên inner OOF | Cost vòng ngoài / mẫu | Từ chối vòng ngoài | Số folds đạt chính sách 35% |
+| --- | ---: | ---: | ---: | ---: |
+| RF mặc định, ngưỡng 0.50 | — | 0.99750 | 17.250% | **5/5** |
+| RF chọn ngưỡng | 30% | 0.82000 | 30.250% | 3/5 |
+| RF chọn ngưỡng | 32% | 0.79875 | 31.125% | 3/5 |
+| RF chọn ngưỡng | 35% | 0.73375 | 34.375% | 3/5 |
+| TPE | 30% | 0.80500 | **27.250%** | **4/5** |
+| TPE | 32% | 0.80875 | 28.375% | **4/5** |
+| TPE | 35% | **0.70375** | 34.375% | 3/5 |
+
+Đây là điểm **vòng ngoài của nested CV trên 800 mẫu train**, không phải điểm
+test mới. Không so trực tiếp cost 0.70375 ở đây với cost 0.67 trên test cũ để
+kết luận mô hình tăng/giảm chất lượng: khác mẫu đánh giá và quy trình fit/chọn.
+
+- Với TPE, hạ trần lựa chọn từ 35% xuống 30% giúp tỷ lệ từ chối ngoài giảm
+  **7.125 điểm phần trăm**, số folds đạt chính sách tăng từ 3 lên 4. Đổi lại,
+  cost tăng từ **0.70375 lên 0.80500**, và recall bad giảm từ 63.33% xuống 53.75%.
+- Trần 30% vẫn có một fold từ chối **39.375%**, vượt chính sách gốc. Khoảng đệm
+  giúp cải thiện mức đáp ứng quan sát được, **chưa bảo đảm ràng buộc trên mọi
+  nhóm dữ liệu**. Trần 32% cũng chỉ đạt 4/5 folds.
+- Khi gộp 800 dự đoán ngoài, cả bảy phương án đều đạt trần 35%. Tuy nhiên, chỉ
+  RF mặc định đạt trần trên cả năm folds và phải chịu chi phí cao nhất.
+- TPE không thắng baseline ở mọi mức trần: với trần 32%, cost TPE **0.80875**
+  cao hơn baseline chọn ngưỡng **0.79875**, dù tỷ lệ từ chối TPE thấp hơn.
+
+**Kết luận nghiên cứu bổ sung:** đã định lượng được đánh đổi giữa chi phí, khả
+năng phát hiện lớp bad và tỷ lệ phê duyệt. Khoảng đệm là hướng đáng nghiên cứu
+tiếp khi ưu tiên giảm tỷ lệ từ chối, không phải bản sửa bảo đảm mô hình đạt
+chính sách. Không thay mô hình đã khóa hoặc chọn lại ngưỡng từ các điểm ngoài.
+Cần dữ liệu chưa sử dụng để xác nhận độc lập một quy trình được chốt trong
+nghiên cứu tiếp theo; thay đổi split trên dữ liệu đã xem không thay thế việc đó.
+
+[Bảng tổng hợp](results/robustness/run-20261109T024250942600Z/aggregate.csv) ·
+[Điểm từng fold](results/robustness/run-20261109T024250942600Z/per_fold.csv) ·
+[Dự đoán ngoài](results/robustness/run-20261109T024250942600Z/outer_predictions.csv) ·
+[Metadata và checksum](results/robustness/run-20261109T024250942600Z/run_metadata.json)
+
+![Đánh đổi chi phí và tỷ lệ từ chối trong nested CV](results/robustness/run-20261109T024250942600Z/presentation/cost_rejection_tradeoff.png)
+![Tỷ lệ từ chối từng fold ngoài](results/robustness/run-20261109T024250942600Z/outer_fold_rejection.png)
 
 ### Lộ trình 05 Tuần
 
@@ -574,13 +654,96 @@ nguyên nhân; không xóa dấu vết để thử nhiều mô hình trên test.
 thời điểm chọn/fit. Trạng thái cuối `test_evaluated: true` nằm trong
 `test_evaluation.json`; không sửa ngược lịch sử để cập nhật trạng thái.
 
-Bộ **34 kiểm thử** dùng dữ liệu giả kiểm tra objective, logs, thống kê nhiều seeds,
+Bộ kiểm thử gồm **43 kiểm thử** dùng dữ liệu giả kiểm tra objective, logs, thống kê nhiều seeds,
 checkpoint/resume, lựa chọn, lưu/nạp mô hình, đánh giá đúng ngưỡng và chặn đánh giá
 lặp/đầu vào thay đổi. Kiểm thử không sử dụng 200 mẫu holdout làm fixture.
 `.gitattributes` cố định kiểu xuống dòng của các file có checksum, gồm ngoại lệ
 CRLF của dữ liệu/log cũ, để checkout trên máy khác giữ đúng byte đã ghi nhận.
 Các checkpoint Optuna chỉ lưu nội bộ; bản GitHub cung cấp log/kết quả để kiểm tra,
 không cung cấp trạng thái resume. Lần tuần 4 đã hoàn tất không cần resume.
+
+### Chạy/đọc lại so sánh baseline bổ sung
+
+```powershell
+.\.venv\Scripts\python.exe -m src.evaluate_baselines
+```
+
+Đã chạy xong. Chạy lại lệnh chỉ xác minh checksum và hiển thị bảng đã lưu;
+không fit, không đọc test hoặc chạy dự đoán lại. Kết quả bổ sung nằm riêng trong
+`results/week5/baseline_test/`, gồm `baseline_model.joblib`, `predictions.csv`,
+`comparison.csv`, `metrics.json`, `comparison.png` và `evaluation.json`.
+Nhật ký ghi nhận một lần fit trên train, một lần tính xác suất baseline trên
+test và hai ngưỡng lịch sử. Chỉ nạp mô hình joblib từ nguồn tin cậy.
+
+Bốn kiểm thử bổ sung xác minh fit train một lần cho cả hai ngưỡng, đối chiếu
+row IDs/nhãn/dự đoán TPE, phát hiện artifact bị sửa, và ngăn lặp lại lượt đánh giá.
+Các JSON test TPE ban đầu được giữ nguyên cùng checksum. Nhận xét trong
+`test_metrics.json` rằng chưa đánh giá baseline phản ánh thời điểm lần đầu;
+kết quả và cách diễn giải cập nhật nằm ở thư mục bổ sung này.
+
+### Nghiên cứu bổ sung: khoảng đệm và nested cross-validation
+
+Thí nghiệm này được thiết kế sau khi quan sát vi phạm chính sách trên test cũ.
+Chỉ dùng **800 mẫu train ban đầu**; chương trình chặn mở `credit_test.csv`.
+Chia lại dữ liệu đã xem không tạo ra một test độc lập mới. Nested CV tách vòng
+chọn cấu hình khỏi vòng đánh giá trong thí nghiệm mới, nhưng không xóa việc
+hướng nghiên cứu đã chịu ảnh hưởng từ kết quả cũ. Tham khảo
+[hướng dẫn nested CV của scikit-learn](https://scikit-learn.org/stable/auto_examples/model_selection/plot_nested_cross_validation_iris.html).
+
+Protocol được lưu trước khi chạy tại [configs/robustness.json](configs/robustness.json):
+
+- **Vòng ngoài:** 5-fold stratified CV, seed 20261109; mỗi lần 640 mẫu train và
+  160 mẫu validation. Mỗi mẫu train gốc được đánh giá ngoài đúng một lần/phương án.
+- **Vòng trong:** 3-fold stratified CV trên 640 mẫu, seed 20261110. Imputer và
+  encoder chỉ fit trong phần train của từng fold. Không dùng nhãn fold ngoài
+  để chọn siêu tham số, ngưỡng hoặc khoảng đệm.
+- **Ba mức trần lựa chọn:** 30%, 32%, 35% trên inner OOF. Mỗi mức chạy TPE riêng,
+  cùng search space tuần 3, 50 trials gồm 10 trials khởi tạo, sampler/RF seed 42.
+  **Trần dùng để đánh giá ở vòng ngoài luôn là chính sách gốc 35%.**
+- **Bảy phương án:** RF ngưỡng 0.50; RF chọn ngưỡng bằng inner OOF cho từng mức
+  trần; TPE tối ưu 5 biến cho từng mức trần. Baseline quét lưới 0.10–0.90 bước
+  0.01 ở vòng trong; không lấy lại ngưỡng 0.38 đã chọn trên toàn bộ 800 mẫu.
+- **Ngân sách:** 15 tìm kiếm × 50 trials × 3 folds = 2.250 lần fit tìm kiếm.
+  Thêm 15 fits CV baseline, 5 refits RF baseline dùng chung các ngưỡng, tối đa
+  15 refits TPE để dự đoán fold ngoài: tối đa **2.285 lần fit** khi chạy liền mạch.
+- **Nếu không tìm thấy nghiệm khả thi:** ghi nhận thiếu dự đoán; không nới trần,
+  thay bằng nghiệm vi phạm hoặc báo cost bằng 0. Chỉ báo pooled score khi đủ
+  800 dự đoán ngoài cho phương án đó.
+
+Năm folds ngoài đo biến động theo phần dữ liệu được giữ lại, **không phải năm
+sampler seeds độc lập**. Thí nghiệm này dùng một sampler seed; thí nghiệm năm
+sampler seeds ở tuần 4 vẫn là bằng chứng riêng về độ ổn định thuật toán tìm kiếm.
+Báo cả chi phí gộp, tỷ lệ từ chối gộp và số folds đạt trần 35%. Một phương án
+đạt trần khi gộp vẫn có thể vi phạm ở từng fold; không bảo đảm chính sách tương lai.
+Không chọn một phương án thắng từ điểm ngoài rồi coi chính điểm đó là kiểm tra
+độc lập cho việc lựa chọn mới. Mô hình cuối và kết quả test tuần 5 được giữ nguyên.
+
+Lệnh bắt đầu một lần chạy mới (không cần chạy lại lần đã hoàn tất):
+
+```powershell
+.\.venv\Scripts\python.exe -m src.robustness
+```
+
+Nếu bị ngắt, dùng đúng thư mục đã in trên terminal:
+
+```powershell
+.\.venv\Scripts\python.exe -m src.robustness --resume "results/robustness/run-20261109T024250942600Z"
+```
+
+Khi đã hoàn tất, lệnh `--resume` chỉ kiểm tra checksum đầu ra. Với lần đang dở,
+checkpoint giữ trạng thái TPE trước/sau mỗi trial; fold ngoài đã hoàn tất được
+đọc lại. Các bước baseline/refit của một fold chưa lưu xong có thể chạy lại.
+Giữ nguyên code/config/dữ liệu/môi trường để resume; checkpoint chỉ dùng trên máy
+đã tạo nó, bị Git bỏ qua. Không dùng runtime của lần resume để kết luận nhanh hơn.
+
+Mỗi lần chạy lưu `splits.json`, `inner_choices.json` từng fold, logs/checkpoint
+từng tìm kiếm, dự đoán ngoài, bảng `per_fold.csv`, `aggregate.csv`, hai biểu đồ
+chi phí–từ chối và biến động giữa folds, cùng metadata/hash để kiểm tra lại.
+Lần chạy trên đã được kiểm tra đủ 131 đầu ra ghi trong metadata. Bản đồ thị ở
+`presentation/` thay nhãn chồng nhau bằng chú giải, được vẽ từ CSV đã xác minh
+bằng `python -m src.robustness_plot`; có metadata dựng hình riêng, không chạy
+lại mô hình hay thay đổi artifact gốc. Năm kiểm thử mới đã đạt: tách fold,
+chọn ngưỡng, thiếu nghiệm khả thi, bảo vệ test và đọc lại fold đã hoàn tất.
 
 ## 7. Repository structure
 
@@ -591,7 +754,8 @@ credit-risk-cost-sensitive-optimization/
 ├── requirements-lock.txt        # Phiên bản thư viện của môi trường đã chạy
 ├── .gitignore
 ├── configs/
-│   └── experiment.json          # Config chuẩn: data, seeds, costs, policy, budget
+│   ├── experiment.json          # Config chuẩn: data, seeds, costs, policy, budget
+│   └── robustness.json          # Protocol bổ sung; giữ nguyên config gốc
 ├── src/
 │   ├── __init__.py
 │   ├── config.py                # Đọc và kiểm tra config
@@ -604,7 +768,11 @@ credit-risk-cost-sensitive-optimization/
 │   ├── week4_analysis.py        # Thống kê, so sánh cặp seed và biểu đồ
 │   ├── finalize.py              # Chốt lựa chọn, fit train; không đọc test
 │   ├── final_model.py           # Pipeline và suy luận bằng threshold đã chốt
-│   └── evaluate_final.py        # Đánh giá test một lần, đọc lại kết quả đã lưu
+│   ├── evaluate_final.py        # Đánh giá test một lần, đọc lại kết quả đã lưu
+│   ├── evaluate_baselines.py    # So sánh bổ sung 2 baseline với TPE trên cùng test
+│   ├── robustness.py            # Nested CV và tìm kiếm có khoảng đệm, train-only
+│   ├── robustness_analysis.py   # Gộp điểm ngoài, bảng và biểu đồ đánh đổi
+│   └── robustness_plot.py       # Vẽ bản trình bày từ CSV đã xác minh, không fit
 ├── data/
 │   ├── README.md
 │   ├── credit_train.csv         # 800 mẫu với đặc trưng chưa mã hóa
@@ -620,7 +788,9 @@ credit-risk-cost-sensitive-optimization/
 │   ├── test_artifacts.py        # Ghi log nguyên tử và retry
 │   ├── test_resume.py           # Ngắt/tiếp tục tìm kiếm giữ nguyên RNG
 │   ├── test_finalize.py         # Chọn bằng CV và refit train
-│   └── test_evaluate_final.py   # Bảo vệ holdout và kiểm tra artifact cuối
+│   ├── test_evaluate_final.py   # Bảo vệ holdout và kiểm tra artifact cuối
+│   ├── test_evaluate_baselines.py # Kiểm tra so sánh bổ sung bằng dữ liệu giả
+│   └── test_robustness.py       # Chặn rò rỉ giữa vòng trong/ngoài và test gốc
 ├── figures/
 └── report/
     └── week1_formulation.md     # Ghi chú mô hình hóa trong repo
@@ -647,6 +817,11 @@ credit-risk-cost-sensitive-optimization/
   AI đã thực hiện tuần 5 theo yêu cầu: chốt lựa chọn bằng CV, fit lại một lần trên
   train, kiểm tra lưu/nạp, rồi đánh giá một lần trên test khi sinh viên yêu cầu.
   AI bổ sung kiểm thử, đối chiếu kết quả, hoàn thiện README và commit/push.
+  Sau khi đã xem kết quả TPE, sinh viên yêu cầu so sánh thêm hai baseline trên
+  cùng test; AI thực hiện với tham số/ngưỡng lịch sử, lưu kết quả bổ sung riêng
+  và cập nhật diễn giải. Không thực hiện tinh chỉnh mô hình từ kết quả test này.
+  Theo yêu cầu tiếp theo, AI triển khai và chạy thí nghiệm khoảng đệm/nested CV
+  trên train gốc, ghi rõ tính chất nghiên cứu bổ sung sau khi đã xem test cũ.
   Sinh viên chịu trách nhiệm hiểu và giải thích từng bước của dự án.
 
 ## 9. Commit and push

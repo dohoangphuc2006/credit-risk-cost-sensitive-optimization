@@ -14,3 +14,4 @@
 /results/week4/run-20261108T055756731500Z/review.md text eol=crlf
 
 /results/week5/*.joblib -text
+/results/week5/**/*.joblib -text

@@ -1,0 +1,7 @@
+{
+  "created_at_utc": "2026-11-09T02:49:21.227721+00:00",
+  "purpose": "Legend replaces overlapping annotations; presentation only. No models or predictions recomputed.",
+  "source_aggregate_sha256": "755a33c55e3a2ebb5bece2c4a2ad25b7e0d09d09213235ad939e715feb95455e",
+  "renderer_sha256": "32e3944d9934c9cb95befe44edbf339264d86972ad0b72e320da69d280afdb95",
+  "image_sha256": "a61c397eb021a3263ac2e001eec898d068a609104c880014d9ed3ab96e7f49ac"
+}
