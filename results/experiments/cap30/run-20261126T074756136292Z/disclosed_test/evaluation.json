@@ -1,0 +1,15 @@
+{
+  "scope": "Post hoc comparison on the disclosed Week 5 test records. No tuning or refitting.",
+  "test_sha256": "3697a6532cf4460dfea54f78a8953dc71e990ef5d8975a5e344cb67f125a63c2",
+  "n_test": 200,
+  "candidate_model_sha256": "4d20f66625907aba01be0edad9140d8f7cfabb41102d2f813c770610d2b44494",
+  "policy_cap": 0.35,
+  "cost": {
+    "false_negative": 5.0,
+    "false_positive": 1.0
+  },
+  "output_sha256": {
+    "comparison.csv": "1ebf3752559dc5bf0ad4ed925393c5f3a1a3d8c43896b5be13e79e16f5ccead7",
+    "predictions.csv": "f30d1dc096d8baa741603a5b552820e3256491036ffc50284899e67dcba59198"
+  }
+}

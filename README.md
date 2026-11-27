@@ -2,13 +2,13 @@
 
 **Tối ưu chi phí phân loại tín dụng dưới ràng buộc tỷ lệ phê duyệt**
 
-Đồ án cá nhân môn **Nhập môn Tối ưu hóa** — Đỗ Hoàng Phúc, chuyên ngành Trí tuệ nhân tạo, Trường Đại học Văn Lang.
+Đồ án cá nhân môn **Nhập môn Tối ưu hóa** của Đỗ Hoàng Phúc, Trường Đại học Văn Lang.
 
 Dự án sử dụng Random Forest để phân loại hồ sơ tín dụng, kết hợp Random Search và Optuna TPE để tìm ngưỡng phân loại và siêu tham số có chi phí sai lầm thấp dưới ràng buộc tỷ lệ từ chối.
 
-**Kết quả chính:** mô hình TPE đạt chi phí test **0.67/mẫu**, thấp hơn hai baseline trong phép so sánh bổ sung, nhưng từ chối **37%** hồ sơ, vượt trần giả định **35%**. Vì vậy, mô hình chưa đáp ứng đầy đủ ràng buộc trên tập test.
+**Phương án đề xuất là TPE C.** Trên 200 hồ sơ test đã đánh giá ở tuần 5, C từ chối **29%** với chi phí **0.77/hồ sơ**, thấp nhất trong các phương án đạt trần **35%**. TPE B có chi phí **0.67/hồ sơ** và từ chối **37%**. Thí nghiệm C được thiết kế sau khi đã biết kết quả test của B, nên phép so sánh phản ánh kết quả trên chính 200 hồ sơ đó.
 
-**Tiến độ:** đã hoàn thành thực nghiệm tuần 1–5, so sánh baseline bổ sung và nested cross-validation. Các phần này đã được push tại [commit f1aa54c](https://github.com/dohoangphuc2006/credit-risk-cost-sensitive-optimization/commit/f1aa54c1a57f7c16e5f71609841dc7547e81cf0f). Báo cáo đơn giản và phần bảo vệ cá nhân còn cần hoàn thiện.
+Đồ án gồm thực nghiệm tuần 1–5, kiểm định chéo lồng và phép đối chiếu bổ sung giữa B, C và các baseline trên cùng tập test.
 
 ## 1. Bài toán và mục tiêu
 
@@ -59,7 +59,7 @@ Chi phí TPE là `(5 × 20 + 34) / 200 = 0.67`. Mô hình từ chối **74/200 h
 
 Trên tập test này, TPE có chi phí thấp hơn RF mặc định **24.72%** và baseline tối ưu ngưỡng **2.90%**. So với baseline ngưỡng 0.38, TPE bỏ sót ít hơn một mẫu bad nhưng từ chối nhầm thêm một mẫu good.
 
-**Diễn giải:** TPE giảm chi phí quan sát được nhưng chưa đạt ràng buộc trên test. Trong ba phương án, chỉ RF mặc định đáp ứng trần 35%. Chưa thể kết luận TPE là phương án khả thi tốt nhất hoặc có khác biệt có ý nghĩa thống kê.
+**Diễn giải:** TPE B có chi phí quan sát thấp nhất ở phép so sánh tuần 5 và vượt trần từ chối 35%. Trong ba phương án ở bảng này, RF mặc định là phương án duy nhất đạt trần.
 
 **Thời điểm so sánh:** hai baseline được đánh giá sau khi đã xem test TPE. Baseline dùng một RF mặc định fit trên train và hai ngưỡng đã xác định từ tuần 2; không quét ngưỡng trên test. Đây là phân tích bổ sung, không phải so sánh đăng ký trước. Kết quả test không được dùng để thay mô hình đã khóa.
 
@@ -183,6 +183,22 @@ Cấu hình mới đã được khóa và fit lại trên toàn bộ train. Các
 
 [Bảng so sánh OOF](results/experiments/cap30/run-20261126T074756136292Z/oof_comparison.csv) · [Kết quả từng seed](results/experiments/cap30/run-20261126T074756136292Z/seed_summary.csv) · [Cấu hình mới](results/experiments/cap30/run-20261126T074756136292Z/selection.json)
 
+### Đối chiếu B và C trên 200 hồ sơ test tuần 5
+
+Mô hình C dùng ngưỡng đã khóa để dự đoán trên đúng 200 hồ sơ đã đánh giá B ở tuần 5. Phép so sánh dùng dự đoán đã lưu của B và hai baseline tuần 2. Baseline có trần chọn 30% dùng ngưỡng 0.42 đã chọn trên train. Trần đánh giá chung là 35%, tương đương tối đa 70 hồ sơ bị từ chối.
+
+| Phương án | Bad được duyệt (FN) | Good bị từ chối (FP) | Hồ sơ bị từ chối | Chi phí/mẫu |
+| --- | ---: | ---: | ---: | ---: |
+| RF mặc định | 33 | 13 | 40 (20%) | 0.89 |
+| RF chọn ngưỡng với trần 35% | 21 | 33 | 72 (36%) | 0.69 |
+| TPE B | 20 | 34 | 74 (37%) | 0.67 |
+| RF chọn ngưỡng với trần 30% | 26 | 26 | 60 (30%) | 0.78 |
+| TPE C | 26 | 24 | 58 (29%) | 0.77 |
+
+C có chi phí thấp nhất trong ba phương án đạt trần trên tập này. So với B, C duyệt thêm 6 hồ sơ bad và giảm 10 lần từ chối nhầm hồ sơ good. Tổng chi phí tăng từ 134 lên 154 theo công thức `5 × FN + FP`. Vì kết quả B đã được xem trước khi thiết kế C, đây là bằng chứng mô tả trên test cũ. Khả năng đạt trần trên hồ sơ mới vẫn cần được kiểm chứng.
+
+[Bảng kết quả](results/experiments/cap30/run-20261126T074756136292Z/disclosed_test/comparison.csv) · [Dự đoán theo hồ sơ](results/experiments/cap30/run-20261126T074756136292Z/disclosed_test/predictions.csv)
+
 ## 6. Cài đặt và kiểm tra kết quả
 
 Mở thư mục gốc dự án trong VS Code, chọn **Terminal → New Terminal**. Môi trường thực nghiệm dùng **Python 3.12.10**; các phiên bản thư viện được lưu trong [requirements-lock.txt](requirements-lock.txt).
@@ -199,6 +215,7 @@ Dữ liệu và folds đã có trong repo. Dùng môi trường tương ứng đ
 ```powershell
 .\.venv\Scripts\python.exe -m src.evaluate_final
 .\.venv\Scripts\python.exe -m src.evaluate_baselines
+.\.venv\Scripts\python.exe -m src.evaluate_cap30
 .\.venv\Scripts\python.exe -m src.robustness --resume results/robustness/run-20261109T024250942600Z
 ```
 
@@ -249,7 +266,7 @@ JSON/CSV tìm kiếm được ghi nguyên tử với retry cho lỗi file tạm 
 | Tuần 4 | 5 sampler seeds, độ nhạy, thống kê và checkpoint | Hoàn tất, đã push |
 | Tuần 5 | Quyết định chọn, refit train, mô hình và test | Hoàn tất thực nghiệm, đã push |
 | Bổ sung | Baseline trên test và khoảng đệm/nested CV | Hoàn tất, đã push tại `f1aa54c` |
-| Bản nộp học phần | Báo cáo đơn giản và bảo vệ cá nhân | Cần hoàn thiện |
+| Bổ sung | So sánh B và C trên cùng 200 hồ sơ test | Hoàn tất |
 
 ```text
 configs/       Cấu hình chính và protocol robustness
@@ -258,7 +275,7 @@ notebooks/     Notebook baseline; kết quả chính được tạo bằng CLI
 results/       Baseline, week3/, week4/, week5/, robustness/
 figures/       Các đồ thị baseline tuần 2
 tests/        Kiểm thử bằng dữ liệu giả
-report/        week1_formulation.md; chưa có báo cáo tổng kết
+report/        Mô hình hóa bài toán tuần 1
 data/         Train/test gốc, metadata, folds và README nguồn dữ liệu
 ```
 
@@ -266,6 +283,6 @@ data/         Train/test gốc, metadata, folds và README nguồn dữ liệu
 
 - German Credit là benchmark nhỏ, công bố năm 1994; chưa đại diện cho tín dụng Việt Nam hiện nay. Nhãn bad không chứng minh hành vi cố tình không trả nợ.
 - Chi phí tương đối 5:1 và trần từ chối 35% là giả định; chưa có đánh giá hiệu quả tài chính hay thẩm định để triển khai thực tế.
-- TPE cuối chưa đạt trần trên test. Khoảng đệm giảm tỷ lệ từ chối trong thí nghiệm bổ sung nhưng vẫn có fold vi phạm.
+- B vượt trần trên tập test tuần 5. C đạt 29% trên cùng tập test. Trong khảo sát bằng kiểm định chéo lồng, TPE với trần tìm kiếm 30% có một fold vượt trần 35%.
 - Năm sampler seeds trên một split và nested CV trên train gốc chưa bao quát thay đổi phân phối dữ liệu. Chưa có kiểm định ý nghĩa thống kê hoặc chứng minh nghiệm tối ưu toàn cục.
 - Hai baseline test và nghiên cứu khoảng đệm được bổ sung sau khi đã xem test TPE; giữ rõ thời điểm và giới hạn khi diễn giải.

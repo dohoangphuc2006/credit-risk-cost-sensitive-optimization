@@ -1,6 +1,6 @@
 # Tuần 1: Đăng ký đề tài và mô hình hóa
 
-**Sinh viên:** Đỗ Hoàng Phúc - Trí tuệ nhân tạo, Trường Đại học Văn Lang.
+**Sinh viên:** Đỗ Hoàng Phúc, Trường Đại học Văn Lang.
 
 Đây là ghi chú thiết kế trong GitHub repo. Sinh viên đã chạy chuẩn bị dữ liệu
 v2, lưu phiên bản môi trường; dữ liệu và checksum đã được kiểm tra.
@@ -168,13 +168,9 @@ Chưa có số liệu thực nghiệm. German Credit nhỏ và cũ; chi phí ben
 ràng buộc giả định chưa phản ánh sản phẩm ngân hàng thực. Năm sampler seeds
 không đại diện cho nhiều mẫu dữ liệu độc lập.
 
-## 10. Nguồn và AI assistance
+## 10. Nguồn dữ liệu
 
 - [UCI: Statlog (German Credit Data)](https://archive.ics.uci.edu/dataset/144/statlog+german+credit+data).
 - [OpenML ID 31](https://www.openml.org/d/31).
 - Hofmann, H. (1994). Statlog (German Credit Data). [DOI](https://doi.org/10.24432/C5NC77).
 - [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).
-- AI hỗ trợ mô hình hóa, chỉnh code, kiểm tra artifact và cập nhật tài liệu.
-  Sinh viên đã chạy chuẩn bị dữ liệu v2 và lưu phiên bản môi trường.
-  Chưa huấn luyện baseline hoặc chạy tối ưu; sinh viên chịu trách nhiệm
-  hiểu và giải thích dữ liệu, công thức và pipeline.
