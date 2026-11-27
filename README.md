@@ -165,6 +165,24 @@ Cả bảy phương án đạt trần khi gộp 800 dự đoán; chỉ RF mặc 
 ![Đánh đổi chi phí và tỷ lệ từ chối](results/robustness/run-20261109T024250942600Z/presentation/cost_rejection_tradeoff.png)
 ![Tỷ lệ từ chối từng fold ngoài](results/robustness/run-20261109T024250942600Z/outer_fold_rejection.png)
 
+### Thí nghiệm bổ sung với trần lựa chọn 30%
+
+TPE được chạy trên 800 hồ sơ train với 5 folds cố định và 50 trials cho mỗi seed. Cả 5 seed đều tìm được cấu hình từ chối tối đa 30% trên dự đoán OOF gộp. Chi phí trung bình của 5 cấu hình tốt nhất theo seed là **0.77000/mẫu**. Cấu hình có chi phí thấp nhất trong số này thuộc seed 42, lượt thử thứ 30.
+
+| Phương án trên cùng 800 hồ sơ train (OOF) | Chi phí/mẫu ↓ | Tỷ lệ từ chối |
+| --- | ---: | ---: |
+| RF mặc định | 0.97625 | 18.125% |
+| RF chọn ngưỡng với trần 35% (tuần 2) | 0.72000 | 34.500% |
+| TPE với trần 35% (cấu hình tuần 5) | 0.68000 | 34.250% |
+| RF chọn ngưỡng với trần 30% | 0.78750 | 29.250% |
+| **TPE với trần 30% (cấu hình mới)** | **0.74375** | **28.625%** |
+
+So với TPE tuần 5 trên cùng folds, số hồ sơ bị từ chối giảm từ 274 xuống 229. Số hồ sơ good bị từ chối nhầm giảm từ 119 xuống 90, trong khi số hồ sơ bad được phê duyệt tăng từ 85 lên 101. Chi phí tăng vì mỗi hồ sơ bad được phê duyệt mang chi phí 5. Với cùng trần tìm kiếm 30%, TPE có chi phí thấp hơn baseline chỉ chỉnh ngưỡng ở 4/5 seed.
+
+Cấu hình mới đã được khóa và fit lại trên toàn bộ train. Các số OOF trong bảng được dùng khi chọn cấu hình. Test 200 mẫu đã được xem ở tuần 5 và được chặn trong lần chạy này. Để xác nhận mô hình mới vừa giảm chi phí vừa đạt trần chính sách 35%, cần đối chiếu nó với các baseline trên dữ liệu độc lập mới.
+
+[Bảng so sánh OOF](results/experiments/cap30/run-20261126T074756136292Z/oof_comparison.csv) · [Kết quả từng seed](results/experiments/cap30/run-20261126T074756136292Z/seed_summary.csv) · [Cấu hình mới](results/experiments/cap30/run-20261126T074756136292Z/selection.json)
+
 ## 6. Cài đặt và kiểm tra kết quả
 
 Mở thư mục gốc dự án trong VS Code, chọn **Terminal → New Terminal**. Môi trường thực nghiệm dùng **Python 3.12.10**; các phiên bản thư viện được lưu trong [requirements-lock.txt](requirements-lock.txt).
@@ -194,6 +212,7 @@ Với artifact đã hoàn tất và checksum còn đúng, các lệnh trên xác
 | `src.optimize` | Tạo run tuần 3 mới: Random Search và TPE, 50 trials/method, seed 42 |
 | `src.week4` | Tạo run tuần 4 mới, bổ sung seeds và độ nhạy, tái sử dụng seed 42 đã xác minh |
 | `src.robustness` | Tạo run nested CV mới, chỉ dùng train gốc |
+| `src.cap30` | Tìm và lưu riêng mô hình TPE với trần train 30%, có checkpoint từng seed |
 | `src.robustness_plot` | Vẽ bản trình bày từ aggregate CSV đã xác minh, không fit |
 
 Không cần chạy lại thực nghiệm chỉ để xem kết quả. `src.baseline` có thể ghi lại artifact mà các bước sau dùng checksum; nếu muốn tái lập toàn bộ, nên dùng bản sao riêng của repo và chạy theo thứ tự. Chỉ tái tạo dữ liệu bằng `src.data_utils --force` khi chủ động muốn thay artifact và có kết nối nguồn dữ liệu.
@@ -206,13 +225,14 @@ Không cần chạy lại thực nghiệm chỉ để xem kết quả. `src.base
 .\.venv\Scripts\python.exe -m unittest discover -s tests -v
 ```
 
-Bộ mã có 43 kiểm thử bằng dữ liệu giả, gồm objective, logs, thống kê seeds, checkpoint/resume, chọn cấu hình, lưu/nạp mô hình, bảo vệ holdout và tách vòng trong/ngoài. Các kiểm thử không dùng test thật làm fixture.
+Bộ mã có 45 kiểm thử, gồm objective, logs, thống kê seeds, checkpoint/resume, chọn cấu hình, lưu/nạp mô hình, bảo vệ holdout và tách vòng trong/ngoài. Hai kiểm thử của thí nghiệm 30% dùng dữ liệu giả cho trường hợp có và thiếu nghiệm khả thi.
 
 Để tiếp tục một run đang dở, dùng đúng đường dẫn đã in trên terminal:
 
 ```powershell
 .\.venv\Scripts\python.exe -m src.week4 --resume "results/week4/run-THOI_GIAN_CUA_BAN"
 .\.venv\Scripts\python.exe -m src.robustness --resume "results/robustness/run-THOI_GIAN_CUA_BAN"
+.\.venv\Scripts\python.exe -m src.cap30 --resume "results/experiments/cap30/run-20261126T074756136292Z"
 ```
 
 `search.checkpoint.json` lưu Optuna Study, trạng thái sampler/RNG và trial đang dở. File này chỉ dùng nội bộ trên máy và bị Git bỏ qua; repo công khai có logs và kết quả để kiểm tra. Giữ nguyên code, config, dữ liệu, môi trường và chỉ mở một process/run khi resume. Trial đang dở có thể được tính lại; các bước baseline/refit của fold chưa lưu xong cũng có thể chạy lại. Runtime resume có thể thiếu phần tính toán trước checkpoint cuối.

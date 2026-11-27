@@ -1,0 +1,188 @@
+{
+  "created_at_utc": "2026-11-26T07:47:56.136292+00:00",
+  "protocol": {
+    "scope": "Exploratory after disclosure of the original holdout; selection uses fixed train OOF only.",
+    "evaluation_policy_cap": 0.35,
+    "search_config": {
+      "dataset": {
+        "openml_id": 31,
+        "name": "credit-g",
+        "expected_samples": 1000,
+        "expected_features": 20
+      },
+      "split": {
+        "test_size": 0.2,
+        "seed": 42
+      },
+      "cv": {
+        "n_splits": 5,
+        "shuffle": true,
+        "seed": 42
+      },
+      "model_seed": 42,
+      "optimization": {
+        "trials_per_seed": 50,
+        "sampler_seeds": [
+          42,
+          100,
+          2024,
+          2025,
+          2026
+        ],
+        "search_space": {
+          "threshold": {
+            "type": "float",
+            "low": 0.1,
+            "high": 0.9
+          },
+          "n_estimators": {
+            "type": "int",
+            "low": 20,
+            "high": 200
+          },
+          "max_depth": {
+            "type": "int",
+            "low": 2,
+            "high": 15
+          },
+          "min_samples_split": {
+            "type": "int",
+            "low": 2,
+            "high": 20
+          },
+          "bad_class_weight": {
+            "type": "float",
+            "low": 1.0,
+            "high": 10.0
+          }
+        }
+      },
+      "cost": {
+        "false_negative": 5.0,
+        "false_positive": 1.0
+      },
+      "policy": {
+        "max_rejection_rate": 0.3,
+        "constraint_scope": "pooled_train_oof",
+        "penalty_multiplier": 10.0
+      },
+      "sensitivity": {
+        "planned_max_rejection_rates": [
+          0.25,
+          0.35,
+          0.45
+        ],
+        "planned_false_negative_costs": [
+          2.0,
+          5.0,
+          10.0
+        ]
+      }
+    },
+    "eligibility": "Fit a candidate only if all planned seeds have a feasible trial.",
+    "tie_order": [
+      "cost_per_sample",
+      "n_estimators",
+      "max_depth",
+      "seed_config_order",
+      "trial_number"
+    ],
+    "inputs": {
+      "credit_train.csv": "8281704fe68e1ce1747342a0125560399f09e2ce8d9f88dec24c3f4dbf5d97bc",
+      "cv_folds.json": "d78957043cee5a641883146569c445b12f3353b7c419f500ffdfe26fee112a25",
+      "dataset_metadata.json": "8b37670eec450319d0545c5bf57bc2dcb9e29e1965ea82fe5b1c5fb38bb7596b"
+    },
+    "environment": {
+      "python": "3.12.10",
+      "packages": {
+        "numpy": "2.5.4",
+        "pandas": "3.1.0",
+        "scikit-learn": "1.9.1",
+        "optuna": "5.0.0",
+        "matplotlib": "3.11.2"
+      }
+    },
+    "joblib_version": "1.6.0",
+    "code": {
+      "cap30.py": "2607217963784c66332fde682156db8e52fa41e87fe36bd5f72a7df511825185",
+      "final_model.py": "026940482061216e2d27c90b80cc325fc5584987ce3d60e0a0d185e44da59316",
+      "finalize.py": "5d7e758cc730ee53a5d2ab26b6a8c7a203d650e984df5fc2709c2134b8ef54a3",
+      "robustness.py": "2c43962b0b122547b705905f090ee216d5c019640b80ba7a80aaa34471becc7f",
+      "resumable_search.py": "4d2cdd308d0749ed4e40cb49b80e4f53a892f692cb6a259430ce46f5459b8926",
+      "config.py": "78e0acd5e534eb490a4752321760eb250c2d57ab9ea84731d8eeb4b8dd269bc1",
+      "optimize.py": "a0ae590d87898f4cd20013fe3dc0d2d30aba27a581ee3080a061247f7a21e3f7",
+      "objective.py": "ec41554979b2e86686bab08946105fd23bb0beb4d28d2a8b5f0ac85dfc31aeb9",
+      "preprocessing.py": "f6063906e336f6987ca493a0d783da1065c3802f43966b68cb8ed8052f34a8d1",
+      "baseline.py": "7807f35bc8486a6be29c5a2a09ac4fa99a3b7492a430bac7541231468bcf4e0d",
+      "week4.py": "df18b639e7e5ff60b0327af76ebb8d8eae2bb8cbb2319f8e5cc5b5e246820caa",
+      "week4_analysis.py": "559ac195f8ca80ef8bd6c53758e92d3586d44c673239fee9e7d1f036bfdc3e80",
+      "artifacts.py": "98e72df2811d5f1d6661867525d8fd1439f34fc93ad25f960d167e8c416426a2",
+      "data_utils.py": "be7da2171ce686a2fcba0b138c1e58319299485ff1783dccb4b32f0644cbf3aa"
+    },
+    "historical_oof_and_cap30_baselines": [
+      {
+        "method": "baseline_default",
+        "threshold": 0.5,
+        "cost_per_sample": 0.97625,
+        "rejection_rate": 0.18125
+      },
+      {
+        "method": "baseline_threshold",
+        "threshold": 0.38,
+        "cost_per_sample": 0.72,
+        "rejection_rate": 0.345
+      },
+      {
+        "method": "baseline_threshold_cap30",
+        "threshold": 0.42,
+        "cost_per_sample": 0.7875,
+        "rejection_rate": 0.2925
+      },
+      {
+        "method": "week5_tpe",
+        "threshold": 0.5454772140992292,
+        "cost_per_sample": 0.68,
+        "rejection_rate": 0.3425
+      }
+    ]
+  },
+  "test_evaluated": false,
+  "status": "complete",
+  "completed_at_utc": "2026-11-26T07:51:47.793995+00:00",
+  "n_train": 800,
+  "feasible_seeds": 5,
+  "completed_trials": 250,
+  "search_fits": 1250,
+  "candidate_fitted": true,
+  "output_sha256": {
+    "candidate_model.joblib": "4d20f66625907aba01be0edad9140d8f7cfabb41102d2f813c770610d2b44494",
+    "oof_comparison.csv": "c9a4cb5f34168e6be9b982cc15e4104e17f7815e2e808510d501d068f1e60ae9",
+    "seed_summary.csv": "826e7873264cc6e20c9d7bcfeba5601bdb0f2b253e3352d07e1f48bb971977d3",
+    "selection.json": "ceb063ddee2b0ebf0e19318456e908b91dac5027cf3bc010457c43591b03844a",
+    "tpe_seed100/best_feasible.json": "e7162ba437a25defef79fe6e087c61bf9b742a57ac9be93b7706516f9c3244fa",
+    "tpe_seed100/best_oof.csv": "f0c85546c1a71b8c6f58f979980d8695cf1d3c69a77e3431b915695b5e849bca",
+    "tpe_seed100/summary.json": "b8dcbbae3438a36c68ed1cbbe15569beefdc7d6015c2e0ca5c929764d4d60605",
+    "tpe_seed100/trials.csv": "282740486d2265cc1b7fef793db500a8fcc587cfaaea89623130b88bf46c5c0a",
+    "tpe_seed100/trials.json": "d2e713e6923bdb36e17b0ac5ecfd501fb11da4cf9eb5e6312814cf3a0e4f8fb5",
+    "tpe_seed2024/best_feasible.json": "84779e6b5d54a0b3addfc78fade4c380d2b8bed1762461ec5196fb3a48cbf6c5",
+    "tpe_seed2024/best_oof.csv": "8b6af11c42addc0ab868bd9b046375adeb545a923925d14ae11fcbf9b52b0ca1",
+    "tpe_seed2024/summary.json": "cb784ad18f5d7788083125bd272e0c58ba6423ebe4dea79d5e86054b05b7866d",
+    "tpe_seed2024/trials.csv": "cdc2ee3c5249335ef77c04c50e30b5b778c7ca9661159480ab1c5b92e799ce96",
+    "tpe_seed2024/trials.json": "cbd4bc8127754fb8640cab4c18b73685ce673de7fdc395e3905aebe0e6d61027",
+    "tpe_seed2025/best_feasible.json": "542baa802a77654d58bae02e7506a4850b950cd1416074b29be006eed10db677",
+    "tpe_seed2025/best_oof.csv": "28f4bf278013a01f5560edc0d74fc1901ad87fabc728ec007a14bfc6c152b9ee",
+    "tpe_seed2025/summary.json": "86222867760a04a14aae1fc16d777f3e8c1b44117408d2262e431db67344732f",
+    "tpe_seed2025/trials.csv": "c145b962f8aedec8584c37b4f834a4c77e4a408c348e5c3c9e112a8ee18274f1",
+    "tpe_seed2025/trials.json": "4039e2684fc7877107a6b1e739a520a68e33bca95ccdbcd33ed800e8c9447fdd",
+    "tpe_seed2026/best_feasible.json": "373dec44ac7ee156983e454e2acfc912781bfe36b89ea2f5d3fe6b297da6cd8c",
+    "tpe_seed2026/best_oof.csv": "e0019438cc7ff6f55d56b38875da7e26f350a0fee08b02320881bdc7fdbb4a78",
+    "tpe_seed2026/summary.json": "5730768b742d8afd3ae910cbe69133dac8794bd3e84123139521050c06c9d1a5",
+    "tpe_seed2026/trials.csv": "6102e72a45a272d46b4098760de05a41e941fbb3c3f1ab997e422f2bc7036b81",
+    "tpe_seed2026/trials.json": "d8a8fababeb6e4d51b37d510cbf9db990b9a6b63538ff24f3d6095dc9623d5d3",
+    "tpe_seed42/best_feasible.json": "933ea8f947341efeccfb20e007ddd38944d42e89b2e6571fe8f8c7021a895276",
+    "tpe_seed42/best_oof.csv": "eddb1c5ebbb445910ae721eb79deb4fdae3cccb840e69df0aa6f0112009f0bbf",
+    "tpe_seed42/summary.json": "60c11db5e1255257e885c6d73281c8dc0b37cc46303e2ea21f4247cf965cf644",
+    "tpe_seed42/trials.csv": "a28a36950d275fc546e86009b9109754ff9bbcddb96927b1b90b290c484f481e",
+    "tpe_seed42/trials.json": "5ba3e827326b28155673c321a3317909cca4f534a2c56a114c717385769852a6"
+  }
+}

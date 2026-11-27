@@ -1,0 +1,6 @@
+method,threshold,cost_per_sample,rejection_rate
+baseline_default,0.5,0.97625,0.18125
+baseline_threshold,0.38,0.72,0.345
+baseline_threshold_cap30,0.42,0.7875,0.2925
+week5_tpe,0.5454772140992292,0.68,0.3425
+tpe_cap30,0.39987936445491956,0.74375,0.28625
